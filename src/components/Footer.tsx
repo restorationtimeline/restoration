@@ -89,6 +89,7 @@ export const Footer = () => {
               <li><a href="#" className="text-accent/80 hover:text-accent">FAQ</a></li>
               <li><a href="#" className="text-accent/80 hover:text-accent">Privacy</a></li>
               <li><a href="#" className="text-accent/80 hover:text-accent">Terms</a></li>
+              <li><a href="/admin" className="text-accent/80 hover:text-accent">Admin</a></li>
             </ul>
           </div>
         </div>

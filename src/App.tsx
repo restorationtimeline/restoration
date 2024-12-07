@@ -10,8 +10,8 @@ import UserManagement from "./pages/UserManagement";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -21,8 +21,8 @@ const App = () => (
           <Route path="/admin/users" element={<UserManagement />} />
         </Routes>
       </TooltipProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;

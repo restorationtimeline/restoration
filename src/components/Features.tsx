@@ -3,24 +3,44 @@ import { FeatureCard } from "./FeatureCard";
 export const Features = () => {
   const features = [
     {
-      title: "Ancient Civilizations",
-      description: "Explore the foundations of human society through ancient civilizations.",
+      title: "People",
+      description: "Learn about key figures who shaped the Restoration movement and their lasting impact.",
+      icon: "👥",
+    },
+    {
+      title: "Events",
+      description: "Explore significant moments and turning points in Mormon history.",
+      icon: "📅",
+    },
+    {
+      title: "Places",
+      description: "Discover the locations where important historical events unfolded.",
       icon: "🏛️",
     },
     {
-      title: "Medieval Period",
-      description: "Discover the rich history of castles, knights, and medieval culture.",
-      icon: "⚔️",
+      title: "Organizations",
+      description: "Understand the various groups and institutions that emerged during the Restoration.",
+      icon: "🏢",
     },
     {
-      title: "Renaissance",
-      description: "Experience the rebirth of art, science, and human achievement.",
-      icon: "🎨",
+      title: "Ideas",
+      description: "Examine the theological concepts and doctrinal developments that shaped the movement.",
+      icon: "💡",
     },
     {
-      title: "Modern Era",
-      description: "Understand the events that shaped our contemporary world.",
-      icon: "🌍",
+      title: "Artifacts",
+      description: "Study historical objects and documents that provide insights into the past.",
+      icon: "📜",
+    },
+    {
+      title: "Sources",
+      description: "Access primary and secondary sources that document the historical record.",
+      icon: "📚",
+    },
+    {
+      title: "Perspectives",
+      description: "Consider different viewpoints and interpretations of historical events.",
+      icon: "🔍",
     },
   ];
 

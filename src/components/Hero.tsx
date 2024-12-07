@@ -13,10 +13,10 @@ export const Hero = () => {
           </p>
           <div className="space-x-4 animate-fade-up">
             <Button size="lg" className="bg-primary text-accent hover:bg-primary/90">
-              Begin Journey
+              Personalize Your Experience
             </Button>
             <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
-              View Sources
+              Begin Exploring
             </Button>
           </div>
         </div>

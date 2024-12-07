@@ -3,11 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const [password, setPassword] = useState("");
   const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +66,11 @@ const Admin = () => {
               <Button variant="outline" className="justify-start">
                 Manage Content
               </Button>
-              <Button variant="outline" className="justify-start">
+              <Button
+                variant="outline"
+                className="justify-start"
+                onClick={() => navigate("/admin/users")}
+              >
                 User Management
               </Button>
               <Button variant="outline" className="justify-start">

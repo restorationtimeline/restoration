@@ -37,7 +37,6 @@ export const Footer = () => {
       {/* Main Footer Content */}
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Description */}
           <div className="md:col-span-1">
             <h3 className="text-xl font-serif mb-4">Restoration Timeline</h3>
             <p className="text-accent/80 text-sm mb-6">
@@ -97,13 +96,6 @@ export const Footer = () => {
         {/* Copyright */}
         <div className="mt-16 pt-8 border-t border-accent/20 text-center text-sm text-accent/60">
           <p>© Restoration Timeline {new Date().getFullYear()}. All rights reserved.</p>
-          <p className="mt-2">
-            Proudly hosted with{" "}
-            <a href="#" className="text-accent hover:text-accent/80">
-              Modern Infrastructure
-            </a>
-            .
-          </p>
         </div>
       </div>
     </footer>

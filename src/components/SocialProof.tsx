@@ -2,19 +2,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 
 const testimonials = [
-  { id: 1, initial: "SJ", image: "/placeholder.svg" },
-  { id: 2, initial: "MT", image: "/placeholder.svg" },
-  { id: 3, initial: "EM", image: "/placeholder.svg" },
-  { id: 4, initial: "RH", image: "/placeholder.svg" },
-  { id: 5, initial: "DB", image: "/placeholder.svg" },
-  { id: 6, initial: "LW", image: "/placeholder.svg" },
-  { id: 7, initial: "KP", image: "/placeholder.svg" },
-  { id: 8, initial: "AS", image: "/placeholder.svg" },
-  { id: 9, initial: "JB", image: "/placeholder.svg" },
-  { id: 10, initial: "MC", image: "/placeholder.svg" },
-  { id: 11, initial: "TP", image: "/placeholder.svg" },
-  { id: 12, initial: "RD", image: "/placeholder.svg" },
-  // Add more testimonials as needed to fill the grid
+  { id: 1, initial: "SJ", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 2, initial: "MT", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 3, initial: "EM", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 4, initial: "RH", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 5, initial: "DB", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 6, initial: "LW", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 7, initial: "KP", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 8, initial: "AS", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 9, initial: "JB", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 10, initial: "MC", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 11, initial: "TP", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 12, initial: "RD", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 13, initial: "AH", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 14, initial: "CL", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 15, initial: "BK", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 16, initial: "NP", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 17, initial: "WS", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 18, initial: "VR", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 19, initial: "YT", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 20, initial: "UQ", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 21, initial: "XZ", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 22, initial: "OI", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
+  { id: 23, initial: "PM", image: "https://xsgames.co/randomusers/avatar.php?g=male" },
+  { id: 24, initial: "GF", image: "https://xsgames.co/randomusers/avatar.php?g=female" },
 ];
 
 export const SocialProof = () => {
@@ -41,7 +52,7 @@ export const SocialProof = () => {
 
           <div className="text-center lg:text-left lg:w-72">
             <Avatar className="w-24 h-24 mx-auto lg:mx-0 mb-4 border-4 border-muted">
-              <AvatarImage src="/placeholder.svg" alt="Featured scholar" />
+              <AvatarImage src="https://xsgames.co/randomusers/avatar.php?g=female" alt="Featured scholar" />
               <AvatarFallback className="bg-muted text-primary">DP</AvatarFallback>
             </Avatar>
             <h3 className="font-serif text-xl text-primary mb-2">Dr. Patricia Hansen</h3>

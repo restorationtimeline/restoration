@@ -26,14 +26,16 @@ Deno.serve(async (req) => {
     }
 
     // Create a Supabase client with the user's JWT
-    const supabase = createClient(supabaseUrl, authHeader.replace('Bearer ', ''))
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
     
     // Verify the user exists and get their data
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const { data: { user }, error: userError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
     if (userError || !user) {
       console.error('User verification failed:', userError)
       throw new Error('Not authenticated')
     }
+
+    console.log('User authenticated:', user.id)
 
     // Verify user is admin
     const { data: profile, error: profileError } = await supabase
@@ -51,6 +53,8 @@ Deno.serve(async (req) => {
       console.error('User is not an admin:', user.id)
       throw new Error('Not authorized')
     }
+
+    console.log('Admin access verified for user:', user.id)
 
     // Parse the request
     const { action, ...params } = await req.json()

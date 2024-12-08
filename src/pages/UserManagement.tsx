@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -25,15 +25,40 @@ const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       // Get the current session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session?.access_token) {
+      
+      if (sessionError || !session) {
         console.error('Session error:', sessionError);
+        toast({
+          title: "Authentication Error",
+          description: "Please sign in to access this page",
+          variant: "destructive",
+        });
+        navigate("/auth");
         throw new Error("Not authenticated");
+      }
+
+      // Verify admin role
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.role !== 'admin') {
+        toast({
+          title: "Access Denied",
+          description: "You don't have permission to access this page",
+          variant: "destructive",
+        });
+        navigate("/");
+        throw new Error("Not authorized");
       }
 
       // Call the admin function with the session token
@@ -53,6 +78,7 @@ const UserManagement = () => {
 
       return data.users;
     },
+    retry: false,
   });
 
   const filteredUsers = users?.filter(user =>

@@ -1,102 +1,60 @@
-import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Link as LinkIcon, Quote } from "lucide-react";
-import { Database } from "@/integrations/supabase/types";
+import { WebsiteConfig } from "./WebsiteConfig";
 
-type Source = Database["public"]["Tables"]["content_sources"]["Row"];
+export function SourcesList() {
+  const { data: sources } = useQuery({
+    queryKey: ["content-sources"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("content_sources")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-interface SourcesListProps {
-  sources: Source[];
-}
+      if (error) throw error;
+      return data;
+    },
+  });
 
-export const SourcesList = ({ sources }: SourcesListProps) => {
-  const getSourceIcon = (type: string) => {
-    switch (type) {
-      case 'file':
-        return <FileText className="h-4 w-4" />;
-      case 'url':
-        return <LinkIcon className="h-4 w-4" />;
-      case 'manual':
-        return <Quote className="h-4 w-4" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusColor = (status: string | null) => {
-    switch (status) {
-      case 'published':
-        return 'bg-green-500';
-      case 'pending':
-        return 'bg-yellow-500';
-      case 'error':
-        return 'bg-red-500';
-      case 'draft':
-        return 'bg-yellow-500';
-      case 'archived':
-        return 'bg-gray-500';
-      default:
-        return 'bg-blue-500';
-    }
-  };
+  if (!sources?.length) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        No sources added yet
+      </div>
+    );
+  }
 
   return (
-    <ScrollArea className="h-[calc(100vh-8rem)]">
-      <div className="space-y-3 px-1">
-        {sources?.map((source) => (
-          <div
-            key={source.id}
-            className="flex items-start gap-3 rounded-lg border bg-card p-4 shadow-sm"
-          >
-            <div className="mt-1 text-muted-foreground">
-              {getSourceIcon(source.source_type)}
-            </div>
-            <div className="flex-1 space-y-1">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="font-medium leading-none">{source.title}</h3>
-                <div className="flex gap-2 flex-wrap justify-end">
-                  {source.work_type && (
-                    <Badge variant="outline" className="whitespace-nowrap">
-                      {source.work_type}
-                    </Badge>
-                  )}
-                  {source.status && (
-                    <div className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(source.status)}`}>
-                      {source.status}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Type: {source.source_type}
-              </p>
-              {source.url && (
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-500 hover:underline"
-                >
-                  {source.url}
-                </a>
-              )}
+    <ScrollArea className="h-[calc(100vh-16rem)]">
+      <div className="space-y-4 p-4">
+        {sources.map((source) => (
+          <Card key={source.id}>
+            <CardHeader>
+              <CardTitle>{source.title}</CardTitle>
+              <CardDescription>{source.source_type}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {source.url && <p className="text-sm mb-4">{source.url}</p>}
               {source.citation && (
-                <p className="mt-2 text-sm">{source.citation}</p>
+                <p className="text-sm text-muted-foreground">{source.citation}</p>
               )}
-              {source.page_title && (
-                <p className="mt-2 text-sm font-medium">
-                  Page Title: {source.page_title}
-                </p>
+              {source.source_type === "url" && (
+                <div className="mt-4">
+                  <WebsiteConfig sourceId={source.id} />
+                </div>
               )}
-              {source.last_crawled_at && (
-                <p className="text-xs text-muted-foreground">
-                  Last crawled: {new Date(source.last_crawled_at).toLocaleString()}
-                </p>
-              )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </ScrollArea>
   );
-};
+}

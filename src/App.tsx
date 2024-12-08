@@ -12,6 +12,7 @@ import ContentManagement from "./pages/ContentManagement";
 import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
 import { Auth } from "./components/Auth";
+import { RoleGuard } from "./components/RoleGuard";
 
 const queryClient = new QueryClient();
 
@@ -24,13 +25,62 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/users/invite" element={<InviteUser />} />
-          <Route path="/admin/users/:userId" element={<UserDetailsPage />} />
-          <Route path="/admin/content" element={<ContentManagement />} />
-          <Route path="/admin/analytics" element={<Analytics />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route
+            path="/admin"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <Admin />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <UserManagement />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/users/invite"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <InviteUser />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/users/:userId"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <UserDetailsPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <ContentManagement />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <Analytics />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <RoleGuard allowedRoles={["admin"]}>
+                <AdminSettings />
+              </RoleGuard>
+            }
+          />
         </Routes>
       </TooltipProvider>
     </QueryClientProvider>

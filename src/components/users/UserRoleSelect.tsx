@@ -20,8 +20,8 @@ export function UserRoleSelect({ currentRole, onChange }: UserRoleSelectProps) {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="user">User</SelectItem>
+        <SelectItem value="editor">Editor</SelectItem>
         <SelectItem value="admin">Admin</SelectItem>
-        <SelectItem value="moderator">Moderator</SelectItem>
       </SelectContent>
     </Select>
   );

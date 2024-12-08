@@ -20,30 +20,114 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Search, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-// This will be replaced with actual data from Supabase later
-const mockUsers = [
-  { id: 1, email: "user1@example.com", role: "user", status: "active" },
-  { id: 2, email: "user2@example.com", role: "admin", status: "active" },
-  { id: 3, email: "user3@example.com", role: "user", status: "inactive" },
-];
+const inviteFormSchema = z.object({
+  email: z.string().email(),
+});
+
+type UserWithProfile = {
+  id: string;
+  email?: string;
+  role?: string;
+  created_at: string;
+  profile?: {
+    display_name: string | null;
+  };
+};
 
 const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
-  const handleRoleChange = (userId: number, newRole: string) => {
-    toast({
-      title: "Role Updated",
-      description: `User role has been updated to ${newRole}`,
-    });
-  };
+  const form = useForm<z.infer<typeof inviteFormSchema>>({
+    resolver: zodResolver(inviteFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
-  const handleStatusChange = (userId: number, newStatus: string) => {
-    toast({
-      title: "Status Updated",
-      description: `User status has been updated to ${newStatus}`,
-    });
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const { data: users, error } = await supabase.auth.admin.listUsers();
+      if (error) throw error;
+
+      // Fetch profiles for all users
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, display_name, role");
+
+      const profilesMap = new Map(profiles?.map(p => [p.id, p]));
+
+      return users.users.map(user => ({
+        ...user,
+        profile: profilesMap.get(user.id),
+      })) as UserWithProfile[];
+    },
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role })
+        .eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: "Role Updated",
+        description: "User role has been updated successfully",
+      });
+    },
+  });
+
+  const inviteUserMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const { error } = await supabase.auth.admin.inviteUserByEmail(email);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setIsInviteDialogOpen(false);
+      form.reset();
+      toast({
+        title: "Invitation Sent",
+        description: "User has been invited successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const filteredUsers = users?.filter(user =>
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.profile?.display_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const onInviteSubmit = (values: z.infer<typeof inviteFormSchema>) => {
+    inviteUserMutation.mutate(values.email);
   };
 
   return (
@@ -74,10 +158,38 @@ const UserManagement = () => {
                     className="pl-9"
                   />
                 </div>
-                <Button className="flex gap-2">
-                  <UserPlus className="h-4 w-4" />
-                  Add User
-                </Button>
+                <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="flex gap-2">
+                      <UserPlus className="h-4 w-4" />
+                      Invite User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Invite New User</DialogTitle>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onInviteSubmit)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter email address" {...field} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit" className="w-full">
+                          Send Invitation
+                        </Button>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div className="rounded-md border">
@@ -85,19 +197,28 @@ const UserManagement = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Email</TableHead>
+                      <TableHead>Display Name</TableHead>
                       <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>Joined</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockUsers.map((user) => (
+                    {isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center">
+                          Loading users...
+                        </TableCell>
+                      </TableRow>
+                    ) : filteredUsers?.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.profile?.display_name || "-"}</TableCell>
                         <TableCell>
                           <Select
-                            defaultValue={user.role}
-                            onValueChange={(value) => handleRoleChange(user.id, value)}
+                            defaultValue={user.profile?.role || "user"}
+                            onValueChange={(value) =>
+                              updateRoleMutation.mutate({ userId: user.id, role: value })
+                            }
                           >
                             <SelectTrigger className="w-32">
                               <SelectValue />
@@ -110,33 +231,7 @@ const UserManagement = () => {
                           </Select>
                         </TableCell>
                         <TableCell>
-                          <Select
-                            defaultValue={user.status}
-                            onValueChange={(value) => handleStatusChange(user.id, value)}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="inactive">Inactive</SelectItem>
-                              <SelectItem value="suspended">Suspended</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Reset Password",
-                                description: "Password reset email has been sent",
-                              });
-                            }}
-                          >
-                            Reset Password
-                          </Button>
+                          {new Date(user.created_at).toLocaleDateString()}
                         </TableCell>
                       </TableRow>
                     ))}

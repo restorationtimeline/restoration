@@ -23,6 +23,7 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
     try {
       console.log("Starting photo upload for user:", userId);
       const fileExt = file.name.split('.').pop();
+      // Use userId as filename, maintaining the original file extension
       const filePath = `${userId}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage

@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
 
         const { data: profiles } = await adminClient
           .from('profiles')
-          .select('id, display_name, role')
+          .select('id, display_name, role, full_name')
 
         const profilesMap = new Map(profiles?.map(p => [p.id, p]))
         const enrichedUsers = users.users.map(user => ({
@@ -80,37 +80,6 @@ Deno.serve(async (req) => {
 
         return new Response(
           JSON.stringify({ users: enrichedUsers }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      case 'inviteUser': {
-        const { email } = params
-        const { error } = await adminClient.auth.admin.inviteUserByEmail(email)
-        if (error) {
-          console.error('Failed to invite user:', error)
-          throw error
-        }
-
-        return new Response(
-          JSON.stringify({ success: true }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      case 'updateUserRole': {
-        const { userId, role } = params
-        const { error } = await adminClient
-          .from('profiles')
-          .update({ role })
-          .eq('id', userId)
-        if (error) {
-          console.error('Failed to update user role:', error)
-          throw error
-        }
-
-        return new Response(
-          JSON.stringify({ success: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }

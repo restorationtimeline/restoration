@@ -1,4 +1,4 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
+import { ScrollArea } from "./ui/scroll-area";
 import { StoryCard } from "./StoryCard";
 
 export const Features = () => {
@@ -51,25 +51,15 @@ export const Features = () => {
         <h2 className="font-serif text-4xl md:text-5xl text-primary text-center mb-12">
           What Will You Explore?
         </h2>
-        <div className="relative px-8">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {features.map((feature, index) => (
-                <CarouselItem key={index} className="pl-2 md:pl-4 basis-[180px] md:basis-[200px]">
-                  <StoryCard {...feature} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-0" />
-            <CarouselNext className="right-0" />
-          </Carousel>
-        </div>
+        <ScrollArea className="w-full whitespace-nowrap rounded-md">
+          <div className="flex space-x-4 p-4">
+            {features.map((feature, index) => (
+              <div key={index} className="shrink-0 w-[180px] md:w-[200px]">
+                <StoryCard {...feature} />
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
     </section>
   );

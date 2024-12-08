@@ -12,47 +12,41 @@ const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
 })
 
 Deno.serve(async (req) => {
+  // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Verify the request is from an admin
-  const authHeader = req.headers.get('Authorization')
-  if (!authHeader) {
-    return new Response(
-      JSON.stringify({ error: 'No authorization header' }),
-      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
-
-  const supabase = createClient(supabaseUrl, authHeader.replace('Bearer ', ''))
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    return new Response(
-      JSON.stringify({ error: 'Not authenticated' }),
-      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
-
-  // Verify user is admin
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    return new Response(
-      JSON.stringify({ error: 'Not authorized' }),
-      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
-
-  // Parse the request
-  const { action, ...params } = await req.json()
-
   try {
+    // Get the authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('No authorization header')
+    }
+
+    // Create a Supabase client with the user's JWT
+    const supabase = createClient(supabaseUrl, authHeader.replace('Bearer ', ''))
+    
+    // Verify the user exists
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      throw new Error('Not authenticated')
+    }
+
+    // Verify user is admin
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError || profile?.role !== 'admin') {
+      throw new Error('Not authorized')
+    }
+
+    // Parse the request
+    const { action, ...params } = await req.json()
+
     switch (action) {
       case 'listUsers': {
         const { data: users, error } = await adminClient.auth.admin.listUsers()
@@ -106,7 +100,10 @@ Deno.serve(async (req) => {
     console.error('Admin function error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: error.message === 'Not authenticated' ? 401 : 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     )
   }
 })

@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { CrawlerProgress } from "./CrawlerProgress";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 type WebsiteConfigProps = {
   sourceId: string;
@@ -69,7 +70,7 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
   });
 
   useEffect(() => {
-    const subscription = supabase
+    const channel: RealtimeChannel = supabase
       .channel('crawler-status')
       .on<RealtimePayload>(
         'postgres_changes',
@@ -79,7 +80,7 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
           table: 'web_crawler_queue',
           filter: `source_id=eq.${sourceId}`,
         },
-        (payload: RealtimePayload) => {
+        (payload) => {
           const { status, error } = payload.new;
           setCrawlerStatus(status);
           setCrawlerError(error);
@@ -88,7 +89,7 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      channel.unsubscribe();
     };
   }, [sourceId]);
 

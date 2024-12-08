@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
 import { Auth } from "./components/Auth";
 import { RoleGuard } from "./components/RoleGuard";
+import NewSource from "./pages/NewSource";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,14 @@ const App = () => (
             element={
               <RoleGuard allowedRoles={["admin", "editor"]}>
                 <ContentManagement />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content/new"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <NewSource />
               </RoleGuard>
             }
           />

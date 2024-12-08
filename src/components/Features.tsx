@@ -1,4 +1,4 @@
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { StoryCard } from "./StoryCard";
 
 export const Features = () => {
@@ -51,15 +51,18 @@ export const Features = () => {
         <h2 className="font-serif text-4xl md:text-5xl text-primary text-center mb-12">
           What Will You Explore?
         </h2>
-        <ScrollArea className="w-full whitespace-nowrap rounded-md" data-orientation="horizontal">
-          <div className="flex space-x-4 p-4 touch-pan-x">
-            {features.map((feature, index) => (
-              <div key={index} className="shrink-0 w-[120px] md:w-[133px]">
-                <StoryCard {...feature} />
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+        <div className="relative">
+          <ScrollArea className="w-full whitespace-nowrap rounded-md" data-orientation="horizontal">
+            <div className="flex space-x-4 p-4 touch-pan-x">
+              {features.map((feature, index) => (
+                <div key={index} className="shrink-0 w-[120px] md:w-[133px]">
+                  <StoryCard {...feature} />
+                </div>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" className="touch-none" />
+          </ScrollArea>
+        </div>
       </div>
     </section>
   );

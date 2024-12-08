@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
 
         const { data: profiles } = await adminClient
           .from('profiles')
-          .select('id, display_name, role, full_name')
+          .select('id, display_name, role, full_name, profile_photo_url')
 
         const profilesMap = new Map(profiles?.map(p => [p.id, p]))
         const enrichedUsers = users.users.map(user => ({

@@ -27,7 +27,7 @@ export function useUserProfile(userId: string) {
       return user;
     },
     staleTime: 0, // Consider data immediately stale
-    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes (renamed from cacheTime)
   });
 
   const invalidateUser = () => {

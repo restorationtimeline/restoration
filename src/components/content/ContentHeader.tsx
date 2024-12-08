@@ -19,9 +19,11 @@ export const ContentHeader = () => {
           <Button variant="ghost" size="icon">
             <Search className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon">
-            <Plus className="h-4 w-4" />
-          </Button>
+          <Link to="/admin/content/new">
+            <Button variant="ghost" size="icon">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,13 +1,51 @@
+import { useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 type CrawlerProgressProps = {
+  sourceId: string;
+  initialStatus?: string | null;
+  initialError?: string | null;
+};
+
+type CrawlerStatus = {
   status: string | null;
   error: string | null;
 };
 
-export function CrawlerProgress({ status, error }: CrawlerProgressProps) {
+export function CrawlerProgress({ sourceId, initialStatus, initialError }: CrawlerProgressProps) {
+  const [status, setStatus] = useState<string | null>(initialStatus || null);
+  const [error, setError] = useState<string | null>(initialError || null);
+
+  useEffect(() => {
+    const channel: RealtimeChannel = supabase
+      .channel('crawler-status')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'web_crawler_queue',
+          filter: `source_id=eq.${sourceId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            const newStatus = payload.new as CrawlerStatus;
+            setStatus(newStatus.status);
+            setError(newStatus.error);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [sourceId]);
+
   const getProgressValue = () => {
     switch (status) {
       case 'completed':

@@ -1,5 +1,3 @@
-import { SourcesList } from "./SourcesList";
-
 interface ContentContainerProps {
   title: string;
   setTitle: (value: string) => void;
@@ -20,7 +18,7 @@ export const ContentContainer = ({
   return (
     <main className="flex-1 overflow-auto pt-16">
       <div className="container mx-auto p-6 space-y-6">
-        <SourcesList />
+        {/* Content will be added here as needed */}
       </div>
     </main>
   );

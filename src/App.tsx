@@ -9,6 +9,7 @@ import UserManagement from "./pages/UserManagement";
 import InviteUser from "./pages/InviteUser";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import ContentManagement from "./pages/ContentManagement";
+import Sources from "./pages/Sources";
 import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
 import { Auth } from "./components/Auth";
@@ -63,6 +64,14 @@ const App = () => (
             element={
               <RoleGuard allowedRoles={["admin", "editor"]}>
                 <ContentManagement />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content/sources"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <Sources />
               </RoleGuard>
             }
           />

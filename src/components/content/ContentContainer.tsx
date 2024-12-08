@@ -7,7 +7,6 @@ interface ContentContainerProps {
   onUrlSubmit: (url: string) => void;
   onCitationSubmit: (citation: string) => void;
   isSubmitting: boolean;
-  sources: any[];
 }
 
 export const ContentContainer = ({
@@ -17,12 +16,11 @@ export const ContentContainer = ({
   onUrlSubmit,
   onCitationSubmit,
   isSubmitting,
-  sources,
 }: ContentContainerProps) => {
   return (
     <main className="flex-1 overflow-auto pt-16">
       <div className="container mx-auto p-6 space-y-6">
-        <SourcesList sources={sources} />
+        <SourcesList />
       </div>
     </main>
   );

@@ -20,14 +20,13 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UserPlus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const inviteFormSchema = z.object({
   email: z.string().email(),
 });
 
-export function InviteUserDialog() {
+export function InviteUserDialog({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -71,10 +70,7 @@ export function InviteUserDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="flex gap-2">
-          <UserPlus className="h-4 w-4" />
-          Invite User
-        </Button>
+        {children}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

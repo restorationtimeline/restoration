@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, Search } from "lucide-react";
+import { ChevronLeft, UserPlus } from "lucide-react";
 import { InviteUserDialog } from "@/components/users/InviteUserDialog";
 import { UserListItem } from "@/components/users/UserListItem";
 import { UserDetails } from "@/components/users/UserDetails";
@@ -24,6 +24,10 @@ type UserWithProfile = {
 const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const lastScrollTop = useRef(0);
+  const pullStartY = useRef(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -81,6 +85,36 @@ const UserManagement = () => {
     retry: false,
   });
 
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      if (scrollRef.current?.scrollTop === 0) {
+        pullStartY.current = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (scrollRef.current?.scrollTop === 0 && !showSearch) {
+        const pullMoveY = e.touches[0].clientY;
+        const pullDistance = pullMoveY - pullStartY.current;
+        
+        if (pullDistance > 60) {
+          setShowSearch(true);
+        }
+      }
+    };
+
+    const element = scrollRef.current;
+    if (element) {
+      element.addEventListener('touchstart', handleTouchStart);
+      element.addEventListener('touchmove', handleTouchMove);
+
+      return () => {
+        element.removeEventListener('touchstart', handleTouchStart);
+        element.removeEventListener('touchmove', handleTouchMove);
+      };
+    }
+  }, [showSearch]);
+
   const filteredUsers = users?.filter(user =>
     user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.profile?.display_name?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -88,56 +122,59 @@ const UserManagement = () => {
 
   return (
     <div className="flex h-screen flex-col">
-      {/* Fixed Navbar */}
       <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
-        <div className="flex h-16 items-center gap-4 px-4">
-          <Link to="/admin">
-            <Button variant="ghost" size="icon" className="shrink-0">
-              <ChevronLeft className="h-4 w-4" />
+        <div className="flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <Link to="/admin">
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="text-xl font-semibold">Users</h1>
+          </div>
+          <InviteUserDialog>
+            <Button variant="ghost" size="icon">
+              <UserPlus className="h-4 w-4" />
             </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">User Management</h1>
+          </InviteUserDialog>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex flex-1 pt-16">
-        {/* User List */}
         <div className="flex w-full flex-col border-r md:w-80">
-          <div className="border-b p-4">
-            <div className="flex flex-col gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
+          {showSearch && (
+            <div className="border-b p-4">
+              <Input
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+                autoFocus
+                onBlur={() => !searchQuery && setShowSearch(false)}
+              />
+            </div>
+          )}
+          <div ref={scrollRef} className="flex-1 overflow-auto">
+            <ScrollArea className="h-[calc(100vh-4rem)]">
+              <div className="space-y-1 p-2">
+                {isLoading ? (
+                  <p className="p-4 text-center text-sm text-muted-foreground">
+                    Loading users...
+                  </p>
+                ) : filteredUsers?.map((user) => (
+                  <UserListItem
+                    key={user.id}
+                    email={user.email}
+                    displayName={user.profile?.display_name}
+                    role={user.profile?.role}
+                    onClick={() => setSelectedUser(user)}
+                  />
+                ))}
               </div>
-              <InviteUserDialog />
-            </div>
+            </ScrollArea>
           </div>
-          <ScrollArea className="flex-1">
-            <div className="space-y-1 p-2">
-              {isLoading ? (
-                <p className="p-4 text-center text-sm text-muted-foreground">
-                  Loading users...
-                </p>
-              ) : filteredUsers?.map((user) => (
-                <UserListItem
-                  key={user.id}
-                  email={user.email}
-                  displayName={user.profile?.display_name}
-                  role={user.profile?.role}
-                  onClick={() => setSelectedUser(user)}
-                />
-              ))}
-            </div>
-          </ScrollArea>
         </div>
 
-        {/* User Details */}
         <div className="hidden flex-1 md:block">
           {selectedUser ? (
             <UserDetails user={selectedUser} />

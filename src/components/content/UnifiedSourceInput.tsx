@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Plus } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { detectSourceType } from "@/utils/sourceTypeDetection";
 import { useState, useRef } from "react";
@@ -66,16 +65,6 @@ export const UnifiedSourceInput = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter source title"
-          />
-        </div>
-
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
             isDragging ? 'border-primary bg-primary/5' : 'border-muted'
@@ -100,33 +89,15 @@ export const UnifiedSourceInput = ({
               </p>
             </div>
 
-            <div className="flex gap-2 justify-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isSubmitting}
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Choose File
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  if ('showPicker' in HTMLInputElement.prototype) {
-                    // @ts-ignore - Experimental API
-                    fileInputRef.current?.showPicker();
-                  } else {
-                    fileInputRef.current?.click();
-                  }
-                }}
-                disabled={isSubmitting}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Mobile Upload
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isSubmitting}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Choose File
+            </Button>
           </div>
         </div>
 

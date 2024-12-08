@@ -8,6 +8,7 @@ interface UserListProps {
     profile?: {
       display_name: string | null;
       role: string | null;
+      full_name: string | null;
     };
   }>;
   isLoading: boolean;
@@ -17,7 +18,8 @@ interface UserListProps {
 export function UserList({ users, isLoading, searchQuery }: UserListProps) {
   const filteredUsers = users?.filter(user =>
     user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.profile?.display_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    user.profile?.display_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.profile?.full_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -34,6 +36,7 @@ export function UserList({ users, isLoading, searchQuery }: UserListProps) {
             email={user.email}
             displayName={user.profile?.display_name}
             role={user.profile?.role}
+            fullName={user.profile?.full_name}
           />
         ))}
       </div>

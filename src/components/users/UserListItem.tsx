@@ -7,9 +7,10 @@ type UserListItemProps = {
   email?: string;
   displayName: string | null;
   role: string | null;
+  fullName?: string | null;
 };
 
-export function UserListItem({ id, email, displayName, role }: UserListItemProps) {
+export function UserListItem({ id, email, displayName, role, fullName }: UserListItemProps) {
   return (
     <Link to={`/admin/users/${id}`} className="block">
       <Button
@@ -21,7 +22,7 @@ export function UserListItem({ id, email, displayName, role }: UserListItemProps
             <User className="h-4 w-4 text-primary" />
           </div>
           <div className="text-left">
-            <p className="font-medium">{displayName || email || "Unnamed User"}</p>
+            <p className="font-medium">{fullName || displayName || email || "Unnamed User"}</p>
             <p className="text-sm text-muted-foreground">{role || "No role"}</p>
           </div>
         </div>

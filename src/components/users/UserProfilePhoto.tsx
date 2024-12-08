@@ -21,8 +21,7 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
       // Create object detection pipeline
       const detector = await pipeline(
         "object-detection",
-        "Xenova/detr-resnet-50",
-        { quantized: false }
+        "Xenova/detr-resnet-50"
       );
 
       // Convert File to base64 for processing

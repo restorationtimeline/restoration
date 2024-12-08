@@ -107,36 +107,32 @@ const NewSource = () => {
       <main className="flex-1 overflow-auto pt-16">
         <div className="container mx-auto p-6 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex items-center justify-end">
-                {hasClipboardContent && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePaste}
-                    className="flex items-center gap-2"
-                  >
-                    <Clipboard className="h-4 w-4" />
-                    Paste source
-                  </Button>
-                )}
-              </div>
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Enter or paste source content"
-                className="min-h-[300px]"
-              />
-            </div>
+            <Textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Enter or paste source content"
+              className="min-h-[300px]"
+            />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={createSourceMutation.isPending}
-            >
-              Create Source
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={createSourceMutation.isPending}
+              >
+                Create Source
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePaste}
+                disabled={!hasClipboardContent}
+                className="flex items-center gap-2"
+              >
+                <Clipboard className="h-4 w-4" />
+                Paste source
+              </Button>
+            </div>
           </form>
         </div>
       </main>

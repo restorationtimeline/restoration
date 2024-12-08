@@ -2,8 +2,34 @@ import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { useToast } from "./ui/use-toast";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/');
+      }
+    };
+    checkUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        navigate('/');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-accent flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -24,8 +50,26 @@ export const Auth = () => {
                   },
                 },
               },
+              style: {
+                button: {
+                  borderRadius: '0.5rem',
+                  height: '2.5rem',
+                },
+                input: {
+                  borderRadius: '0.5rem',
+                },
+              },
             }}
             providers={[]}
+            redirectTo={window.location.origin}
+            onError={(error) => {
+              console.error('Auth error:', error);
+              toast({
+                title: "Authentication Error",
+                description: "Please check your credentials and try again. Make sure you've confirmed your email if you just signed up.",
+                variant: "destructive",
+              });
+            }}
           />
         </CardContent>
       </Card>

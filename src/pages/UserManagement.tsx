@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/integrations/supabase/admin-client";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,19 +33,15 @@ const UserManagement = () => {
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data: users, error } = await adminClient.auth.admin.listUsers();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Not authenticated");
+
+      const { data, error } = await supabase.functions.invoke<{ users: UserWithProfile[] }>("admin", {
+        body: { action: "listUsers" },
+      });
+      
       if (error) throw error;
-
-      const { data: profiles } = await adminClient
-        .from("profiles")
-        .select("id, display_name, role");
-
-      const profilesMap = new Map(profiles?.map(p => [p.id, p]));
-
-      return users.users.map(user => ({
-        ...user,
-        profile: profilesMap.get(user.id),
-      })) as UserWithProfile[];
+      return data.users;
     },
   });
 

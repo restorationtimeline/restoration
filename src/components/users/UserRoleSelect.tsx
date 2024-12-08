@@ -1,4 +1,4 @@
-import { adminClient } from "@/integrations/supabase/admin-client";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
@@ -20,10 +20,9 @@ export function UserRoleSelect({ userId, currentRole }: UserRoleSelectProps) {
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const { error } = await adminClient
-        .from("profiles")
-        .update({ role })
-        .eq("id", userId);
+      const { error } = await supabase.functions.invoke("admin", {
+        body: { action: "updateUserRole", userId, role },
+      });
       if (error) throw error;
     },
     onSuccess: () => {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { adminClient } from "@/integrations/supabase/admin-client";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,7 +41,9 @@ export function InviteUserDialog() {
 
   const inviteUserMutation = useMutation({
     mutationFn: async (email: string) => {
-      const { error } = await adminClient.auth.admin.inviteUserByEmail(email);
+      const { error } = await supabase.functions.invoke("admin", {
+        body: { action: "inviteUser", email },
+      });
       if (error) throw error;
     },
     onSuccess: () => {

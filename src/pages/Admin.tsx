@@ -51,7 +51,6 @@ const Admin = () => {
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      {/* Fixed Navbar */}
       <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
         <div className="flex h-16 items-center gap-4 px-4">
           <Link to="/">
@@ -63,7 +62,6 @@ const Admin = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 pt-16">
         <nav className="divide-y">
           <Button
@@ -83,6 +81,7 @@ const Admin = () => {
           <Button
             variant="ghost"
             className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => navigate("/admin/content")}
           >
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-base font-medium">Content Management</span>
@@ -96,6 +95,7 @@ const Admin = () => {
           <Button
             variant="ghost"
             className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => navigate("/admin/analytics")}
           >
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-base font-medium">Analytics</span>
@@ -109,6 +109,7 @@ const Admin = () => {
           <Button
             variant="ghost"
             className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => navigate("/admin/settings")}
           >
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-base font-medium">Settings</span>

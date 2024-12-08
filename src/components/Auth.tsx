@@ -62,13 +62,25 @@ export const Auth = () => {
             }}
             providers={[]}
             redirectTo={window.location.origin}
-            onError={(error) => {
-              console.error('Auth error:', error);
-              toast({
-                title: "Authentication Error",
-                description: "Please check your credentials and try again. Make sure you've confirmed your email if you just signed up.",
-                variant: "destructive",
-              });
+            localization={{
+              variables: {
+                sign_in: {
+                  email_input_placeholder: "Your email address",
+                  password_input_placeholder: "Your password",
+                  email_label: "Email",
+                  password_label: "Password",
+                  button_label: "Sign in",
+                  loading_button_label: "Signing in ...",
+                },
+                sign_up: {
+                  email_input_placeholder: "Your email address",
+                  password_input_placeholder: "Your password",
+                  email_label: "Email",
+                  password_label: "Password",
+                  button_label: "Sign up",
+                  loading_button_label: "Signing up ...",
+                },
+              },
             }}
           />
         </CardContent>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,7 +50,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-background">
       {/* Fixed Navbar */}
       <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
         <div className="flex h-16 items-center gap-4 px-4">
@@ -64,54 +64,61 @@ const Admin = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 space-y-4 p-4 pt-20">
-        <div className="grid gap-4">
+      <main className="flex-1 pt-16">
+        <nav className="divide-y">
           <Button
-            variant="outline"
-            className="justify-start text-left h-auto py-4"
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
             onClick={() => navigate("/admin/users")}
           >
-            <div>
-              <div className="font-medium">User Management</div>
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">User Management</span>
+              <span className="text-sm text-muted-foreground">
                 Manage user accounts and permissions
-              </div>
+              </span>
             </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Button>
+          
           <Button
-            variant="outline"
-            className="justify-start text-left h-auto py-4"
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
           >
-            <div>
-              <div className="font-medium">Content Management</div>
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Content Management</span>
+              <span className="text-sm text-muted-foreground">
                 Manage timeline content and entries
-              </div>
+              </span>
             </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Button>
+
           <Button
-            variant="outline"
-            className="justify-start text-left h-auto py-4"
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
           >
-            <div>
-              <div className="font-medium">Analytics</div>
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Analytics</span>
+              <span className="text-sm text-muted-foreground">
                 View site statistics and user engagement
-              </div>
+              </span>
             </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Button>
+
           <Button
-            variant="outline"
-            className="justify-start text-left h-auto py-4"
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
           >
-            <div>
-              <div className="font-medium">Settings</div>
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Settings</span>
+              <span className="text-sm text-muted-foreground">
                 Configure site settings and preferences
-              </div>
+              </span>
             </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Button>
-        </div>
+        </nav>
       </main>
     </div>
   );

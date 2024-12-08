@@ -79,7 +79,7 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
           table: 'web_crawler_queue',
           filter: `source_id=eq.${sourceId}`,
         },
-        (payload) => {
+        (payload: RealtimePayload) => {
           const { status, error } = payload.new;
           setCrawlerStatus(status);
           setCrawlerError(error);

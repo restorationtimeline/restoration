@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ChevronLeft, Clipboard } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -11,7 +9,6 @@ import { useMutation } from "@tanstack/react-query";
 
 const NewSource = () => {
   const [hasClipboardContent, setHasClipboardContent] = useState(false);
-  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -57,7 +54,7 @@ const NewSource = () => {
       const { error } = await supabase
         .from("content_sources")
         .insert({
-          title,
+          title: "Untitled Source",
           source_type: "manual",
           citation: content,
           created_by: session.user.id,
@@ -83,10 +80,10 @@ const NewSource = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !content) {
+    if (!content) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Please add some content",
         variant: "destructive",
       });
       return;
@@ -111,18 +108,7 @@ const NewSource = () => {
         <div className="container mx-auto p-6 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter source title"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="content">Content</Label>
+              <div className="flex items-center justify-end">
                 {hasClipboardContent && (
                   <Button
                     type="button"
@@ -137,7 +123,6 @@ const NewSource = () => {
                 )}
               </div>
               <Textarea
-                id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Enter or paste source content"

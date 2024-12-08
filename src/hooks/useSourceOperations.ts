@@ -79,20 +79,32 @@ export const useSourceOperations = (refetchSources: () => void) => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("No session");
 
-      const { error } = await supabase
+      // Insert the source first
+      const { data: source, error: sourceError } = await supabase
         .from("content_sources")
         .insert({
           title,
           source_type: "url",
           url,
           created_by: session.user.id,
+        })
+        .select()
+        .single();
+
+      if (sourceError) throw sourceError;
+
+      // Add to web crawler queue
+      const { error: queueError } = await supabase
+        .from("web_crawler_queue")
+        .insert({
+          source_id: source.id,
         });
 
-      if (error) throw error;
+      if (queueError) throw queueError;
 
       toast({
         title: "Success",
-        description: "URL source added successfully",
+        description: "URL source added successfully and queued for crawling",
       });
       
       setTitle("");

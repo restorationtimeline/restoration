@@ -17,7 +17,11 @@ export type Database = {
           file_path: string | null
           file_type: string | null
           id: string
+          last_crawled_at: string | null
           metadata: Json | null
+          page_content: string | null
+          page_metadata: Json | null
+          page_title: string | null
           source_type: string
           status: string | null
           title: string
@@ -31,7 +35,11 @@ export type Database = {
           file_path?: string | null
           file_type?: string | null
           id?: string
+          last_crawled_at?: string | null
           metadata?: Json | null
+          page_content?: string | null
+          page_metadata?: Json | null
+          page_title?: string | null
           source_type: string
           status?: string | null
           title: string
@@ -45,7 +53,11 @@ export type Database = {
           file_path?: string | null
           file_type?: string | null
           id?: string
+          last_crawled_at?: string | null
           metadata?: Json | null
+          page_content?: string | null
+          page_metadata?: Json | null
+          page_title?: string | null
           source_type?: string
           status?: string | null
           title?: string
@@ -86,6 +98,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      web_crawler_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          error: string | null
+          id: string
+          last_attempt_at: string | null
+          source_id: string
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          source_id: string
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          source_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "web_crawler_queue_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "content_sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -5,10 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, Plus, UserPlus, X } from "lucide-react";
+import { ChevronLeft, Plus, X } from "lucide-react";
 import { InviteUserForm } from "@/components/users/InviteUserForm";
 import { UserListItem } from "@/components/users/UserListItem";
-import { UserDetails } from "@/components/users/UserDetails";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +23,6 @@ type UserWithProfile = {
 
 const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
@@ -144,13 +142,13 @@ const UserManagement = () => {
             size="icon"
             onClick={() => setShowInvite(true)}
           >
-            <UserPlus className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </header>
 
       <main className="flex flex-1 pt-16">
-        <div className="flex w-full flex-col border-r md:w-80">
+        <div className="w-full">
           <div 
             style={{ 
               transform: !showSearch ? `translateY(-${Math.max(0, 64 - pullDistance)}px)` : 'translateY(0)',
@@ -221,27 +219,15 @@ const UserManagement = () => {
                 ) : filteredUsers?.map((user) => (
                   <UserListItem
                     key={user.id}
+                    id={user.id}
                     email={user.email}
                     displayName={user.profile?.display_name}
                     role={user.profile?.role}
-                    onClick={() => setSelectedUser(user)}
                   />
                 ))}
               </div>
             </ScrollArea>
           </div>
-        </div>
-
-        <div className="hidden flex-1 md:block">
-          {selectedUser ? (
-            <UserDetails user={selectedUser} />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                Select a user to view details
-              </p>
-            </div>
-          )}
         </div>
       </main>
     </div>

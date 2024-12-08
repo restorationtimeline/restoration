@@ -26,6 +26,8 @@ export function useUserProfile(userId: string) {
       console.log("Fetched user data:", user);
       return user;
     },
+    staleTime: 0, // Consider data immediately stale
+    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   const invalidateUser = () => {

@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
 
 const Admin = () => {
   const { toast } = useToast();
@@ -41,41 +42,77 @@ const Admin = () => {
   }, [navigate, toast]);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-accent p-4 flex items-center justify-center">
-      Loading...
-    </div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-accent p-4">
-      <div className="container mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Admin Dashboard</CardTitle>
-            <CardDescription>Manage your Restoration Timeline content</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <Button variant="outline" className="justify-start">
-                Manage Content
-              </Button>
-              <Button
-                variant="outline"
-                className="justify-start"
-                onClick={() => navigate("/admin/users")}
-              >
-                User Management
-              </Button>
-              <Button variant="outline" className="justify-start">
-                Analytics
-              </Button>
-              <Button variant="outline" className="justify-start">
-                Settings
-              </Button>
+    <div className="flex h-screen flex-col">
+      {/* Fixed Navbar */}
+      <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
+        <div className="flex h-16 items-center gap-4 px-4">
+          <Link to="/">
+            <Button variant="ghost" size="icon" className="shrink-0">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 space-y-4 p-4 pt-20">
+        <div className="grid gap-4">
+          <Button
+            variant="outline"
+            className="justify-start text-left h-auto py-4"
+            onClick={() => navigate("/admin/users")}
+          >
+            <div>
+              <div className="font-medium">User Management</div>
+              <div className="text-sm text-muted-foreground">
+                Manage user accounts and permissions
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start text-left h-auto py-4"
+          >
+            <div>
+              <div className="font-medium">Content Management</div>
+              <div className="text-sm text-muted-foreground">
+                Manage timeline content and entries
+              </div>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start text-left h-auto py-4"
+          >
+            <div>
+              <div className="font-medium">Analytics</div>
+              <div className="text-sm text-muted-foreground">
+                View site statistics and user engagement
+              </div>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start text-left h-auto py-4"
+          >
+            <div>
+              <div className="font-medium">Settings</div>
+              <div className="text-sm text-muted-foreground">
+                Configure site settings and preferences
+              </div>
+            </div>
+          </Button>
+        </div>
+      </main>
     </div>
   );
 };

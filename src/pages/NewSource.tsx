@@ -6,9 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation } from "@tanstack/react-query";
+import { detectSourceType } from "@/utils/sourceTypeDetection";
 
 const NewSource = () => {
-  const [hasClipboardContent, setHasClipboardContent] = useState(false);
+  const [hasUrlInClipboard, setHasUrlInClipboard] = useState(false);
   const [content, setContent] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -17,10 +18,11 @@ const NewSource = () => {
     const checkClipboard = async () => {
       try {
         const text = await navigator.clipboard.readText();
-        setHasClipboardContent(!!text);
+        const sourceType = detectSourceType(text);
+        setHasUrlInClipboard(sourceType === 'url');
       } catch (err) {
         console.log("Clipboard access denied or empty");
-        setHasClipboardContent(false);
+        setHasUrlInClipboard(false);
       }
     };
 
@@ -32,11 +34,21 @@ const NewSource = () => {
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      setContent(text);
-      toast({
-        title: "Content pasted",
-        description: "Clipboard content has been added to the editor",
-      });
+      const sourceType = detectSourceType(text);
+      
+      if (sourceType === 'url') {
+        setContent(text);
+        toast({
+          title: "Content pasted",
+          description: "URL has been added to the editor",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Clipboard content is not a valid URL",
+          variant: "destructive",
+        });
+      }
     } catch (err) {
       toast({
         title: "Error",
@@ -126,7 +138,7 @@ const NewSource = () => {
                 type="button"
                 variant="outline"
                 onClick={handlePaste}
-                disabled={!hasClipboardContent}
+                disabled={!hasUrlInClipboard}
                 className="flex items-center gap-2"
               >
                 <Clipboard className="h-4 w-4" />

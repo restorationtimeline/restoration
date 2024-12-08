@@ -57,7 +57,11 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
         description: "Profile photo updated successfully",
       });
       
-      onPhotoUpdated();
+      // Call onPhotoUpdated after a short delay to ensure state updates have propagated
+      setTimeout(() => {
+        onPhotoUpdated();
+        setIsUploadingPhoto(false);
+      }, 100);
     } catch (error) {
       console.error("Error updating profile photo:", error);
       toast({
@@ -65,7 +69,6 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
         description: "Failed to update profile photo",
         variant: "destructive",
       });
-    } finally {
       setIsUploadingPhoto(false);
     }
   };

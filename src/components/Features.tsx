@@ -1,4 +1,5 @@
-import { FeatureCard } from "./FeatureCard";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
+import { StoryCard } from "./StoryCard";
 
 export const Features = () => {
   const features = [
@@ -48,12 +49,26 @@ export const Features = () => {
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="font-serif text-4xl md:text-5xl text-primary text-center mb-12">
-          What Will You Learn?
+          What Will You Explore?
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
-          ))}
+        <div className="relative px-8">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {features.map((feature, index) => (
+                <CarouselItem key={index} className="pl-2 md:pl-4 basis-[180px] md:basis-[200px]">
+                  <StoryCard {...feature} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
+          </Carousel>
         </div>
       </div>
     </section>

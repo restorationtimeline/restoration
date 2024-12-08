@@ -3,8 +3,11 @@ import { Features } from "@/components/Features";
 import { TopicSection } from "@/components/TopicSection";
 import { SocialProof } from "@/components/SocialProof";
 import { Footer } from "@/components/Footer";
+import { useRequireAuth } from "@/lib/auth";
 
 const Index = () => {
+  useRequireAuth();
+
   return (
     <div className="min-h-screen bg-accent">
       <Hero />

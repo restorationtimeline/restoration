@@ -77,18 +77,13 @@ export const Auth = () => {
                 container: {
                   background: 'transparent',
                 },
+                message: {
+                  color: 'rgb(var(--destructive))',
+                },
               },
             }}
             providers={[]}
             redirectTo={window.location.origin}
-            onError={(error) => {
-              console.error("Auth error:", error);
-              toast({
-                title: "Authentication Error",
-                description: error.message || "An error occurred during authentication",
-                variant: "destructive",
-              });
-            }}
             localization={{
               variables: {
                 sign_in: {

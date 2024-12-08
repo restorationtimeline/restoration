@@ -66,6 +66,103 @@ export type Database = {
         }
         Relationships: []
       }
+      page_versions: {
+        Row: {
+          changes_detected: Json | null
+          content: string | null
+          content_hash: string
+          crawled_at: string
+          id: string
+          metadata: Json | null
+          normalized_content: string | null
+          page_id: string
+        }
+        Insert: {
+          changes_detected?: Json | null
+          content?: string | null
+          content_hash: string
+          crawled_at?: string
+          id?: string
+          metadata?: Json | null
+          normalized_content?: string | null
+          page_id: string
+        }
+        Update: {
+          changes_detected?: Json | null
+          content?: string | null
+          content_hash?: string
+          crawled_at?: string
+          id?: string
+          metadata?: Json | null
+          normalized_content?: string | null
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_versions_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          depth: number | null
+          id: string
+          last_crawled_at: string | null
+          last_hash: string | null
+          metadata: Json | null
+          parent_url: string | null
+          status: string | null
+          title: string | null
+          updated_at: string
+          url: string
+          website_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          depth?: number | null
+          id?: string
+          last_crawled_at?: string | null
+          last_hash?: string | null
+          metadata?: Json | null
+          parent_url?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string
+          url: string
+          website_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          depth?: number | null
+          id?: string
+          last_crawled_at?: string | null
+          last_hash?: string | null
+          metadata?: Json | null
+          parent_url?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string
+          url?: string
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pages_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -130,6 +227,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "web_crawler_queue_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "content_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      websites: {
+        Row: {
+          auth_config: Json | null
+          crawl_delay: number | null
+          created_at: string
+          domain: string
+          dynamic_rendering: boolean | null
+          id: string
+          max_depth: number | null
+          metadata: Json | null
+          robots_txt: string | null
+          source_id: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_config?: Json | null
+          crawl_delay?: number | null
+          created_at?: string
+          domain: string
+          dynamic_rendering?: boolean | null
+          id?: string
+          max_depth?: number | null
+          metadata?: Json | null
+          robots_txt?: string | null
+          source_id: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_config?: Json | null
+          crawl_delay?: number | null
+          created_at?: string
+          domain?: string
+          dynamic_rendering?: boolean | null
+          id?: string
+          max_depth?: number | null
+          metadata?: Json | null
+          robots_txt?: string | null
+          source_id?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "websites_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "content_sources"

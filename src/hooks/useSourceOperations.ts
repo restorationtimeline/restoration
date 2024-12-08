@@ -87,24 +87,23 @@ export const useSourceOperations = (refetchSources: () => void) => {
           source_type: "url",
           url,
           created_by: session.user.id,
+          status: 'pending'
         })
         .select()
         .single();
 
       if (sourceError) throw sourceError;
 
-      // Add to web crawler queue
-      const { error: queueError } = await supabase
-        .from("web_crawler_queue")
-        .insert({
-          source_id: source.id,
-        });
+      // Trigger web crawler
+      const response = await supabase.functions.invoke('web-crawler', {
+        body: { sourceId: source.id }
+      });
 
-      if (queueError) throw queueError;
+      if (response.error) throw response.error;
 
       toast({
         title: "Success",
-        description: "URL source added successfully and queued for crawling",
+        description: "URL source added successfully and crawling started",
       });
       
       setTitle("");

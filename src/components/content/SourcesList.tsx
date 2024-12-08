@@ -27,6 +27,10 @@ export const SourcesList = ({ sources }: SourcesListProps) => {
     switch (status) {
       case 'published':
         return 'bg-green-500';
+      case 'pending':
+        return 'bg-yellow-500';
+      case 'error':
+        return 'bg-red-500';
       case 'draft':
         return 'bg-yellow-500';
       case 'archived':
@@ -78,6 +82,16 @@ export const SourcesList = ({ sources }: SourcesListProps) => {
               )}
               {source.citation && (
                 <p className="mt-2 text-sm">{source.citation}</p>
+              )}
+              {source.page_title && (
+                <p className="mt-2 text-sm font-medium">
+                  Page Title: {source.page_title}
+                </p>
+              )}
+              {source.last_crawled_at && (
+                <p className="text-xs text-muted-foreground">
+                  Last crawled: {new Date(source.last_crawled_at).toLocaleString()}
+                </p>
               )}
             </div>
           </div>

@@ -5,19 +5,14 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { FileUploadCard } from "@/components/content/FileUploadCard";
-import { UrlSourceCard } from "@/components/content/UrlSourceCard";
-import { CitationCard } from "@/components/content/CitationCard";
+import { UnifiedSourceInput } from "@/components/content/UnifiedSourceInput";
 import { SourcesList } from "@/components/content/SourcesList";
 
 const ContentManagement = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [citation, setCitation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch existing content sources
@@ -64,11 +59,11 @@ const ContentManagement = () => {
     checkAdminAccess();
   }, [navigate, toast]);
 
-  const handleFileUpload = async () => {
-    if (!file || !title) {
+  const handleFileUpload = async (file: File) => {
+    if (!title) {
       toast({
         title: "Error",
-        description: "Please provide both a title and a file",
+        description: "Please provide a title",
         variant: "destructive",
       });
       return;
@@ -108,7 +103,6 @@ const ContentManagement = () => {
         description: "File uploaded successfully",
       });
       
-      setFile(null);
       setTitle("");
       refetchSources();
     } catch (error) {
@@ -122,11 +116,11 @@ const ContentManagement = () => {
     }
   };
 
-  const handleUrlSubmit = async () => {
-    if (!url || !title) {
+  const handleUrlSubmit = async (url: string) => {
+    if (!title) {
       toast({
         title: "Error",
-        description: "Please provide both a title and a URL",
+        description: "Please provide a title",
         variant: "destructive",
       });
       return;
@@ -153,7 +147,6 @@ const ContentManagement = () => {
         description: "URL source added successfully",
       });
       
-      setUrl("");
       setTitle("");
       refetchSources();
     } catch (error) {
@@ -167,11 +160,11 @@ const ContentManagement = () => {
     }
   };
 
-  const handleCitationSubmit = async () => {
-    if (!citation || !title) {
+  const handleCitationSubmit = async (citation: string) => {
+    if (!title) {
       toast({
         title: "Error",
-        description: "Please provide both a title and a citation",
+        description: "Please provide a title",
         variant: "destructive",
       });
       return;
@@ -198,7 +191,6 @@ const ContentManagement = () => {
         description: "Citation added successfully",
       });
       
-      setCitation("");
       setTitle("");
       refetchSources();
     } catch (error) {
@@ -235,32 +227,14 @@ const ContentManagement = () => {
 
       <main className="flex-1 overflow-auto pt-16">
         <div className="container mx-auto p-6 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <FileUploadCard
-              title={title}
-              setTitle={setTitle}
-              file={file}
-              setFile={setFile}
-              onSubmit={handleFileUpload}
-              isSubmitting={isSubmitting}
-            />
-            <UrlSourceCard
-              title={title}
-              setTitle={setTitle}
-              url={url}
-              setUrl={setUrl}
-              onSubmit={handleUrlSubmit}
-              isSubmitting={isSubmitting}
-            />
-            <CitationCard
-              title={title}
-              setTitle={setTitle}
-              citation={citation}
-              setCitation={setCitation}
-              onSubmit={handleCitationSubmit}
-              isSubmitting={isSubmitting}
-            />
-          </div>
+          <UnifiedSourceInput
+            title={title}
+            setTitle={setTitle}
+            onFileUpload={handleFileUpload}
+            onUrlSubmit={handleUrlSubmit}
+            onCitationSubmit={handleCitationSubmit}
+            isSubmitting={isSubmitting}
+          />
           
           <SourcesList sources={sources || []} />
         </div>

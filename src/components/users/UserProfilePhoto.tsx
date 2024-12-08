@@ -21,6 +21,7 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
 
     setIsUploadingPhoto(true);
     try {
+      console.log("Starting photo upload for user:", userId);
       const fileExt = file.name.split('.').pop();
       const filePath = `${userId}.${fileExt}`;
 
@@ -34,6 +35,8 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
         .from('profile_photos')
         .getPublicUrl(filePath);
 
+      console.log("Photo uploaded, updating profile with URL:", publicUrl);
+
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ profile_photo_url: publicUrl })
@@ -41,6 +44,8 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
 
       if (updateError) throw updateError;
 
+      console.log("Profile updated successfully");
+      
       toast({
         title: "Success",
         description: "Profile photo updated successfully",
@@ -48,6 +53,7 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
       
       onPhotoUpdated();
     } catch (error) {
+      console.error("Error updating profile photo:", error);
       toast({
         title: "Error",
         description: "Failed to update profile photo",
@@ -61,7 +67,7 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
   return (
     <div className="flex items-center gap-4">
       <Avatar className="h-20 w-20">
-        <AvatarImage src={photoUrl || undefined} />
+        <AvatarImage src={photoUrl || undefined} alt="Profile photo" />
         <AvatarFallback>
           <User className="h-10 w-10" />
         </AvatarFallback>

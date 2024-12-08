@@ -45,6 +45,8 @@ export function UserDetails({ user }: UserDetailsProps) {
   const { toast } = useToast();
   const { invalidateUser } = useUserProfile(user.id);
 
+  console.log("UserDetails rendered with user:", user);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +59,7 @@ export function UserDetails({ user }: UserDetailsProps) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
+      console.log("Submitting form with values:", values);
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -73,8 +76,10 @@ export function UserDetails({ user }: UserDetailsProps) {
         description: "Profile updated successfully",
       });
       
+      console.log("Profile updated, invalidating cache");
       invalidateUser();
     } catch (error) {
+      console.error("Error updating profile:", error);
       toast({
         title: "Error",
         description: "Failed to update profile",

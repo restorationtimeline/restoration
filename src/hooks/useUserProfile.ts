@@ -7,6 +7,7 @@ export function useUserProfile(userId: string) {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user", userId],
     queryFn: async () => {
+      console.log("Fetching user data for:", userId);
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
@@ -22,11 +23,13 @@ export function useUserProfile(userId: string) {
       const user = users.users.find(u => u.id === userId);
       if (!user) throw new Error("User not found");
 
+      console.log("Fetched user data:", user);
       return user;
     },
   });
 
   const invalidateUser = () => {
+    console.log("Invalidating user cache for:", userId);
     queryClient.invalidateQueries({ queryKey: ["user", userId] });
   };
 

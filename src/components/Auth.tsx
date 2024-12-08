@@ -85,10 +85,6 @@ export const Auth = () => {
                 },
               },
             }}
-            messages={{
-              'Email not confirmed': 'Please check your email and click the confirmation link to verify your account.',
-              'Invalid login credentials': 'Please check your credentials and try again.',
-            }}
           />
         </CardContent>
       </Card>

@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { UnifiedSourceInput } from "@/components/content/UnifiedSourceInput";
-import { SourcesList } from "@/components/content/SourcesList";
+import { ContentHeader } from "@/components/content/ContentHeader";
+import { ContentContainer } from "@/components/content/ContentContainer";
 
 const ContentManagement = () => {
   const { toast } = useToast();
@@ -15,7 +13,6 @@ const ContentManagement = () => {
   const [title, setTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch existing content sources
   const { data: sources, refetch: refetchSources } = useQuery({
     queryKey: ["content-sources"],
     queryFn: async () => {
@@ -214,31 +211,16 @@ const ContentManagement = () => {
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
-        <div className="flex h-16 items-center gap-4 px-4">
-          <Link to="/admin">
-            <Button variant="ghost" size="icon" className="shrink-0">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">Content Management</h1>
-        </div>
-      </header>
-
-      <main className="flex-1 overflow-auto pt-16">
-        <div className="container mx-auto p-6 space-y-6">
-          <UnifiedSourceInput
-            title={title}
-            setTitle={setTitle}
-            onFileUpload={handleFileUpload}
-            onUrlSubmit={handleUrlSubmit}
-            onCitationSubmit={handleCitationSubmit}
-            isSubmitting={isSubmitting}
-          />
-          
-          <SourcesList sources={sources || []} />
-        </div>
-      </main>
+      <ContentHeader />
+      <ContentContainer
+        title={title}
+        setTitle={setTitle}
+        onFileUpload={handleFileUpload}
+        onUrlSubmit={handleUrlSubmit}
+        onCitationSubmit={handleCitationSubmit}
+        isSubmitting={isSubmitting}
+        sources={sources}
+      />
     </div>
   );
 };

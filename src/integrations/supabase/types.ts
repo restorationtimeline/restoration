@@ -19,8 +19,10 @@ export type Database = {
           id: string
           metadata: Json | null
           source_type: string
+          status: string | null
           title: string
           url: string | null
+          work_type: Database["public"]["Enums"]["creativework_type"] | null
         }
         Insert: {
           citation?: string | null
@@ -31,8 +33,10 @@ export type Database = {
           id?: string
           metadata?: Json | null
           source_type: string
+          status?: string | null
           title: string
           url?: string | null
+          work_type?: Database["public"]["Enums"]["creativework_type"] | null
         }
         Update: {
           citation?: string | null
@@ -43,8 +47,10 @@ export type Database = {
           id?: string
           metadata?: Json | null
           source_type?: string
+          status?: string | null
           title?: string
           url?: string | null
+          work_type?: Database["public"]["Enums"]["creativework_type"] | null
         }
         Relationships: []
       }
@@ -89,7 +95,29 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      creativework_type:
+        | "Article"
+        | "Book"
+        | "Chapter"
+        | "Claim"
+        | "Collection"
+        | "CreativeWorkSeries"
+        | "Dataset"
+        | "DigitalDocument"
+        | "Drawing"
+        | "VisualArtwork"
+        | "Episode"
+        | "LearningResource"
+        | "Manuscript"
+        | "Map"
+        | "MediaObject"
+        | "Quotation"
+        | "Review"
+        | "SheetMusic"
+        | "SpecialAnnouncement"
+        | "Statement"
+        | "WebPage"
+        | "WebSite"
     }
     CompositeTypes: {
       [_ in never]: never

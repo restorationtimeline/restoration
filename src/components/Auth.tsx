@@ -82,6 +82,22 @@ export const Auth = () => {
                 },
               },
             }}
+            onError={(error) => {
+              console.error('Auth error:', error);
+              if (error.message.includes('Email not confirmed')) {
+                toast({
+                  title: "Email Not Confirmed",
+                  description: "Please check your email and click the confirmation link to verify your account.",
+                  variant: "destructive",
+                });
+              } else {
+                toast({
+                  title: "Authentication Error",
+                  description: "Please check your credentials and try again.",
+                  variant: "destructive",
+                });
+              }
+            }}
           />
         </CardContent>
       </Card>

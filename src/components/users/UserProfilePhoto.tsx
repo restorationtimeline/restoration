@@ -4,6 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { pipeline } from "@huggingface/transformers";
 
 type UserProfilePhotoProps = {
   userId: string;
@@ -15,15 +16,61 @@ export function UserProfilePhoto({ userId, photoUrl, onPhotoUpdated }: UserProfi
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const { toast } = useToast();
 
+  const validateFaceInImage = async (file: File): Promise<boolean> => {
+    try {
+      // Create object detection pipeline
+      const detector = await pipeline(
+        "object-detection",
+        "Xenova/detr-resnet-50",
+        { quantized: false }
+      );
+
+      // Convert File to base64 for processing
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+
+      // Detect objects in the image
+      const results = await detector(base64);
+      
+      // Check if any detected object is a person/face
+      const hasFace = results.some((result: any) => 
+        result.label === "person" && result.score > 0.7
+      );
+
+      if (!hasFace) {
+        toast({
+          title: "Invalid Profile Photo",
+          description: "Please upload a photo that clearly shows a face.",
+          variant: "destructive"
+        });
+      }
+
+      return hasFace;
+    } catch (error) {
+      console.error("Face detection error:", error);
+      // If face detection fails, we'll allow the upload but log the error
+      return true;
+    }
+  };
+
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploadingPhoto(true);
     try {
+      // Validate that the image contains a face
+      const isValid = await validateFaceInImage(file);
+      if (!isValid) {
+        setIsUploadingPhoto(false);
+        return;
+      }
+
       console.log("Starting photo upload for user:", userId);
       const fileExt = file.name.split('.').pop();
-      // Use userId as filename, maintaining the original file extension
       const filePath = `${userId}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage

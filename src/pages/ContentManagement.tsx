@@ -56,7 +56,6 @@ const ContentManagement = () => {
         onUrlSubmit={handleUrlSubmit}
         onCitationSubmit={handleCitationSubmit}
         isSubmitting={isSubmitting}
-        sources={sources}
       />
     </div>
   );

@@ -1,6 +1,7 @@
-import { ChevronRight, User, Star } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { UserAvatar } from "./UserAvatar";
 
 type UserListItemProps = {
   id: string;
@@ -8,9 +9,17 @@ type UserListItemProps = {
   displayName: string | null;
   role: string | null;
   fullName?: string | null;
+  profilePhotoUrl?: string | null;
 };
 
-export function UserListItem({ id, email, displayName, role, fullName }: UserListItemProps) {
+export function UserListItem({ 
+  id, 
+  email, 
+  displayName, 
+  role, 
+  fullName,
+  profilePhotoUrl 
+}: UserListItemProps) {
   const getRoleIcon = () => {
     switch (role) {
       case 'admin':
@@ -29,9 +38,7 @@ export function UserListItem({ id, email, displayName, role, fullName }: UserLis
         className="w-full justify-between hover:bg-accent"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-            <User className="h-4 w-4 text-primary" />
-          </div>
+          <UserAvatar photoUrl={profilePhotoUrl} />
           <div className="text-left flex items-center gap-2">
             <p className="font-medium">{fullName || displayName || email || "Unnamed User"}</p>
             {getRoleIcon()}

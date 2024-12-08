@@ -9,6 +9,7 @@ interface UserListProps {
       display_name: string | null;
       role: string | null;
       full_name: string | null;
+      profile_photo_url: string | null;
     };
   }>;
   isLoading: boolean;
@@ -37,6 +38,7 @@ export function UserList({ users, isLoading, searchQuery }: UserListProps) {
             displayName={user.profile?.display_name}
             role={user.profile?.role}
             fullName={user.profile?.full_name}
+            profilePhotoUrl={user.profile?.profile_photo_url}
           />
         ))}
       </div>

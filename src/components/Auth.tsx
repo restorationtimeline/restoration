@@ -25,6 +25,9 @@ export const Auth = () => {
       if (event === 'SIGNED_IN') {
         navigate('/');
       }
+      if (event === 'USER_UPDATED') {
+        console.log('User updated:', session);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -82,21 +85,9 @@ export const Auth = () => {
                 },
               },
             }}
-            onError={(error) => {
-              console.error('Auth error:', error);
-              if (error.message.includes('Email not confirmed')) {
-                toast({
-                  title: "Email Not Confirmed",
-                  description: "Please check your email and click the confirmation link to verify your account.",
-                  variant: "destructive",
-                });
-              } else {
-                toast({
-                  title: "Authentication Error",
-                  description: "Please check your credentials and try again.",
-                  variant: "destructive",
-                });
-              }
+            messages={{
+              'Email not confirmed': 'Please check your email and click the confirmation link to verify your account.',
+              'Invalid login credentials': 'Please check your credentials and try again.',
             }}
           />
         </CardContent>

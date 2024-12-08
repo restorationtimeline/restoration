@@ -5,12 +5,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { UserList } from "@/components/users/UserList";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, UserPlus } from "lucide-react";
+import { ChevronLeft, Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 
 const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const { toast } = useToast();
 
   // Check authentication and admin status
@@ -48,26 +49,37 @@ const UserManagement = () => {
             </Button>
           </Link>
           <h1 className="text-xl font-semibold">User Management</h1>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSearch(!showSearch)}
+              className="shrink-0"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
             <Link to="/admin/users/invite">
-              <Button size="icon" variant="ghost">
-                <UserPlus className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <Plus className="h-4 w-4" />
               </Button>
             </Link>
           </div>
         </div>
-        <div className="border-t p-4">
-          <Input
-            type="search"
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
-        </div>
+        {showSearch && (
+          <div className="border-t p-4 bg-background">
+            <Input
+              type="search"
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
+              autoFocus
+            />
+          </div>
+        )}
       </header>
 
-      <main className="flex-1 pt-32">
+      <main className="flex-1 pt-16">
         <UserList
           users={users || []}
           isLoading={isLoading}

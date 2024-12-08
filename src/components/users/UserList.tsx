@@ -22,7 +22,7 @@ export function UserList({ users, isLoading, searchQuery }: UserListProps) {
 
   return (
     <ScrollArea className="h-[calc(100vh-4rem)]">
-      <div className="space-y-1 p-2">
+      <div className="space-y-2 p-4">
         {isLoading ? (
           <p className="p-4 text-center text-sm text-muted-foreground">
             Loading users...

@@ -13,13 +13,17 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CrawlerProgress } from "./CrawlerProgress";
 
 type WebsiteConfigProps = {
   sourceId: string;
+};
+
+type RealtimePayload = {
+  new: {
+    status: string;
+    error: string | null;
+  };
 };
 
 export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
@@ -67,7 +71,7 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
   useEffect(() => {
     const subscription = supabase
       .channel('crawler-status')
-      .on(
+      .on<RealtimePayload>(
         'postgres_changes',
         {
           event: '*',
@@ -122,21 +126,6 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
     }
   };
 
-  const getProgressValue = () => {
-    switch (crawlerStatus) {
-      case 'completed':
-        return 100;
-      case 'processing':
-        return 50;
-      case 'pending':
-        return 0;
-      case 'failed':
-        return 100;
-      default:
-        return 0;
-    }
-  };
-
   if (!website) return null;
 
   return (
@@ -149,24 +138,10 @@ export function WebsiteConfig({ sourceId }: WebsiteConfigProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         {crawlerQueue && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span>Crawler Status: {crawlerStatus || 'Not started'}</span>
-                <span>{getProgressValue()}%</span>
-              </div>
-              <Progress value={getProgressValue()} />
-            </div>
-            
-            {crawlerError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription className="mt-2">
-                  {crawlerError}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+          <CrawlerProgress 
+            status={crawlerStatus} 
+            error={crawlerError}
+          />
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">

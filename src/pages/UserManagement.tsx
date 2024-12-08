@@ -9,6 +9,7 @@ import { ChevronLeft, Search } from "lucide-react";
 import { InviteUserDialog } from "@/components/users/InviteUserDialog";
 import { UserListItem } from "@/components/users/UserListItem";
 import { UserDetails } from "@/components/users/UserDetails";
+import { useToast } from "@/components/ui/use-toast";
 
 type UserWithProfile = {
   id: string;
@@ -23,18 +24,33 @@ type UserWithProfile = {
 const UserManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
+  const { toast } = useToast();
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error("Not authenticated");
+      // Get the current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.access_token) {
+        console.error('Session error:', sessionError);
+        throw new Error("Not authenticated");
+      }
 
+      // Call the admin function with the session token
       const { data, error } = await supabase.functions.invoke<{ users: UserWithProfile[] }>("admin", {
         body: { action: "listUsers" },
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Admin function error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load users. Please try again.",
+          variant: "destructive",
+        });
+        throw error;
+      }
+
       return data.users;
     },
   });

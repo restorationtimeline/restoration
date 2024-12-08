@@ -21,15 +21,17 @@ Deno.serve(async (req) => {
     // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      throw new Error('No authorization header')
+      console.error('No authorization header provided')
+      throw new Error('Not authenticated')
     }
 
     // Create a Supabase client with the user's JWT
     const supabase = createClient(supabaseUrl, authHeader.replace('Bearer ', ''))
     
-    // Verify the user exists
+    // Verify the user exists and get their data
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
+      console.error('User verification failed:', userError)
       throw new Error('Not authenticated')
     }
 
@@ -40,17 +42,27 @@ Deno.serve(async (req) => {
       .eq('id', user.id)
       .single()
 
-    if (profileError || profile?.role !== 'admin') {
+    if (profileError) {
+      console.error('Profile fetch failed:', profileError)
+      throw new Error('Not authorized')
+    }
+
+    if (profile?.role !== 'admin') {
+      console.error('User is not an admin:', user.id)
       throw new Error('Not authorized')
     }
 
     // Parse the request
     const { action, ...params } = await req.json()
+    console.log('Processing admin action:', action, 'with params:', params)
 
     switch (action) {
       case 'listUsers': {
         const { data: users, error } = await adminClient.auth.admin.listUsers()
-        if (error) throw error
+        if (error) {
+          console.error('Failed to list users:', error)
+          throw error
+        }
 
         const { data: profiles } = await adminClient
           .from('profiles')
@@ -71,7 +83,10 @@ Deno.serve(async (req) => {
       case 'inviteUser': {
         const { email } = params
         const { error } = await adminClient.auth.admin.inviteUserByEmail(email)
-        if (error) throw error
+        if (error) {
+          console.error('Failed to invite user:', error)
+          throw error
+        }
 
         return new Response(
           JSON.stringify({ success: true }),
@@ -85,7 +100,10 @@ Deno.serve(async (req) => {
           .from('profiles')
           .update({ role })
           .eq('id', userId)
-        if (error) throw error
+        if (error) {
+          console.error('Failed to update user role:', error)
+          throw error
+        }
 
         return new Response(
           JSON.stringify({ success: true }),
@@ -94,6 +112,7 @@ Deno.serve(async (req) => {
       }
 
       default:
+        console.error('Invalid action requested:', action)
         throw new Error('Invalid action')
     }
   } catch (error) {

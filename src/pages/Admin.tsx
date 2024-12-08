@@ -1,56 +1,49 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Admin = () => {
-  const [password, setPassword] = useState("");
   const { toast } = useToast();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real app, this would be a secure authentication process
-    if (password === "admin") {
-      setIsAuthenticated(true);
-      toast({
-        title: "Success",
-        description: "You have been logged in as admin",
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Invalid password",
-        variant: "destructive",
-      });
-    }
-  };
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-accent p-4 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Admin Login</CardTitle>
-            <CardDescription>Please enter your admin password to continue</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <Input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Button type="submit" className="w-full">Login</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.role !== 'admin') {
+        toast({
+          title: "Access Denied",
+          description: "You don't have permission to access this page",
+          variant: "destructive",
+        });
+        navigate('/');
+      }
+      
+      setIsLoading(false);
+    };
+
+    checkAdminAccess();
+  }, [navigate, toast]);
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-accent p-4 flex items-center justify-center">
+      Loading...
+    </div>;
   }
 
   return (

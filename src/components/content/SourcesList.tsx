@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Link as LinkIcon, Quote } from "lucide-react";
@@ -38,57 +37,52 @@ export const SourcesList = ({ sources }: SourcesListProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Recent Sources</CardTitle>
-      </CardHeader>
-      <ScrollArea className="h-[calc(100vh-12rem)]">
-        <CardContent className="space-y-4">
-          {sources?.map((source) => (
-            <div
-              key={source.id}
-              className="flex items-start gap-3 rounded-lg border p-4"
-            >
-              <div className="mt-1 text-muted-foreground">
-                {getSourceIcon(source.source_type)}
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-medium leading-none">{source.title}</h3>
-                  <div className="flex gap-2 flex-wrap justify-end">
-                    {source.work_type && (
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        {source.work_type}
-                      </Badge>
-                    )}
-                    {source.status && (
-                      <div className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(source.status)}`}>
-                        {source.status}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Type: {source.source_type}
-                </p>
-                {source.url && (
-                  <a
-                    href={source.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-500 hover:underline"
-                  >
-                    {source.url}
-                  </a>
-                )}
-                {source.citation && (
-                  <p className="mt-2 text-sm">{source.citation}</p>
-                )}
-              </div>
+    <ScrollArea className="h-[calc(100vh-8rem)]">
+      <div className="space-y-3 px-1">
+        {sources?.map((source) => (
+          <div
+            key={source.id}
+            className="flex items-start gap-3 rounded-lg border bg-card p-4 shadow-sm"
+          >
+            <div className="mt-1 text-muted-foreground">
+              {getSourceIcon(source.source_type)}
             </div>
-          ))}
-        </CardContent>
-      </ScrollArea>
-    </Card>
+            <div className="flex-1 space-y-1">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-medium leading-none">{source.title}</h3>
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {source.work_type && (
+                    <Badge variant="outline" className="whitespace-nowrap">
+                      {source.work_type}
+                    </Badge>
+                  )}
+                  {source.status && (
+                    <div className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(source.status)}`}>
+                      {source.status}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Type: {source.source_type}
+              </p>
+              {source.url && (
+                <a
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  {source.url}
+                </a>
+              )}
+              {source.citation && (
+                <p className="mt-2 text-sm">{source.citation}</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
   );
 };

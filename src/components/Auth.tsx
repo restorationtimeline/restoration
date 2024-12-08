@@ -35,7 +35,7 @@ export const Auth = () => {
 
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-background/50 backdrop-blur-sm border-[0.5px] shadow-sm">
+      <Card className="w-full max-w-md bg-background/50 backdrop-blur-sm border-0 shadow-sm">
         <CardHeader>
           <CardTitle>Welcome to Restoration Timeline</CardTitle>
           <CardDescription>Sign in or create an account to continue</CardDescription>

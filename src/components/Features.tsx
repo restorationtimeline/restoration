@@ -51,8 +51,8 @@ export const Features = () => {
         <h2 className="font-serif text-4xl md:text-5xl text-primary text-center mb-12">
           What Will You Explore?
         </h2>
-        <ScrollArea className="w-full whitespace-nowrap rounded-md">
-          <div className="flex space-x-4 p-4">
+        <ScrollArea className="w-full whitespace-nowrap rounded-md" data-orientation="horizontal">
+          <div className="flex space-x-4 p-4 touch-pan-x">
             {features.map((feature, index) => (
               <div key={index} className="shrink-0 w-[180px] md:w-[200px]">
                 <StoryCard {...feature} />

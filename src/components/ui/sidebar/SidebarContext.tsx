@@ -1,8 +1,10 @@
 import * as React from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 
+type SidebarState = "expanded" | "collapsed"
+
 type SidebarContext = {
-  state: "expanded" | "collapsed"
+  state: SidebarState
   open: boolean
   setOpen: (open: boolean) => void
   openMobile: boolean
@@ -22,4 +24,4 @@ export function useSidebar() {
 }
 
 export { SidebarContext }
-export type { SidebarContext as SidebarContextType }
+export type { SidebarContext as SidebarContextType, SidebarState }

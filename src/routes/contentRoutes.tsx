@@ -2,6 +2,7 @@ import { Route } from "react-router-dom";
 import ContentManagement from "@/pages/ContentManagement";
 import Sources from "@/pages/Sources";
 import Series from "@/pages/Series";
+import NewSeries from "@/pages/NewSeries";
 import LearningPaths from "@/pages/LearningPaths";
 import Quizzes from "@/pages/Quizzes";
 import NewSource from "@/pages/NewSource";
@@ -32,6 +33,15 @@ export const contentRoutes = [
     element={
       <RoleGuard allowedRoles={["admin", "editor"]}>
         <Series />
+      </RoleGuard>
+    }
+  />,
+  <Route
+    key="new-series"
+    path="/admin/content/series/new"
+    element={
+      <RoleGuard allowedRoles={["admin", "editor"]}>
+        <NewSeries />
       </RoleGuard>
     }
   />,

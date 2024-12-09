@@ -16,12 +16,15 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Database } from "@/integrations/supabase/types";
+
+type SeriesType = Database["public"]["Enums"]["series_type"];
 
 const NewSeries = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
-  const [seriesType, setSeriesType] = useState<string>("other");
+  const [seriesType, setSeriesType] = useState<SeriesType>("other");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -39,17 +42,15 @@ const NewSeries = () => {
 
       const { data, error } = await supabase
         .from("series")
-        .insert([
-          {
-            title,
-            description,
-            series_type: seriesType,
-            created_by: user.id,
-            metadata: {
-              initial_content: content,
-            },
+        .insert({
+          title,
+          description,
+          series_type: seriesType,
+          created_by: user.id,
+          metadata: {
+            initial_content: content,
           },
-        ])
+        })
         .select()
         .single();
 
@@ -115,7 +116,7 @@ const NewSeries = () => {
               <Label htmlFor="type">Series Type</Label>
               <Select
                 value={seriesType}
-                onValueChange={setSeriesType}
+                onValueChange={(value: SeriesType) => setSeriesType(value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select series type" />

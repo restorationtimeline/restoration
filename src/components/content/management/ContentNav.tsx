@@ -1,4 +1,4 @@
-import { Plus, BookOpen, Route, ListChecks } from "lucide-react";
+import { Plus, BookOpen, Route, ListChecks, FileText } from "lucide-react";
 import { ContentNavButton } from "./ContentNavButton";
 
 export const ContentNav = () => {
@@ -9,6 +9,12 @@ export const ContentNav = () => {
         description="View and manage content sources"
         icon={Plus}
         href="/admin/content/sources"
+      />
+      <ContentNavButton
+        title="Original Content"
+        description="Create and manage original content"
+        icon={FileText}
+        href="/admin/content/original"
       />
       <ContentNavButton
         title="Content Series"

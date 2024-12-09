@@ -1,5 +1,4 @@
 import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
 
 const topics = [
   { id: 1, title: "First Vision Accounts", count: 4 },
@@ -55,21 +54,24 @@ export const TopicSection = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="space-y-2 max-w-4xl mx-auto">
           {topics.map((topic) => (
-            <Card 
-              key={topic.id} 
-              className="hover:border-primary/20 transition-colors cursor-pointer bg-accent/50"
+            <button
+              key={topic.id}
+              className="w-full p-4 text-left bg-accent/50 hover:bg-accent transition-colors rounded-lg flex justify-between items-center group"
             >
-              <CardContent className="p-4">
-                <h3 className="font-serif text-base text-primary mb-1 line-clamp-2">
+              <div>
+                <h3 className="font-serif text-lg text-primary group-hover:text-primary/80 transition-colors">
                   {topic.title}
                 </h3>
                 <span className="text-sm text-muted-foreground">
                   {topic.count} sources
                 </span>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="h-8 w-8 rounded-full bg-background/50 flex items-center justify-center">
+                <span className="text-primary text-sm">{topic.count}</span>
+              </div>
+            </button>
           ))}
         </div>
       </div>

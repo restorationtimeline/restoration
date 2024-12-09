@@ -15,10 +15,26 @@ export const ContentContainer = ({
   onCitationSubmit,
   isSubmitting,
 }: ContentContainerProps) => {
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileSubmit = () => {
+    if (file) {
+      onFileUpload(file);
+      setFile(null);
+    }
+  };
+
   return (
     <main className="flex-1 overflow-auto pt-16">
       <div className="container mx-auto p-6 space-y-6">
-        {/* Content will be added here as needed */}
+        <FileUploadCard
+          title={title}
+          setTitle={setTitle}
+          file={file}
+          setFile={setFile}
+          onSubmit={handleFileSubmit}
+          isSubmitting={isSubmitting}
+        />
       </div>
     </main>
   );

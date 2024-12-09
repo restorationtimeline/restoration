@@ -196,6 +196,95 @@ export type Database = {
         }
         Relationships: []
       }
+      series: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          featured: boolean | null
+          id: string
+          metadata: Json | null
+          series_type: Database["public"]["Enums"]["series_type"]
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          metadata?: Json | null
+          series_type?: Database["public"]["Enums"]["series_type"]
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          metadata?: Json | null
+          series_type?: Database["public"]["Enums"]["series_type"]
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      series_items: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          position: number
+          series_id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          position: number
+          series_id: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          position?: number
+          series_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_items_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       web_crawler_queue: {
         Row: {
           attempts: number
@@ -318,6 +407,13 @@ export type Database = {
         | "Statement"
         | "WebPage"
         | "WebSite"
+      series_type:
+        | "weekly_lesson"
+        | "biographical"
+        | "doctrinal_development"
+        | "comparative_religion"
+        | "historical_analysis"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never

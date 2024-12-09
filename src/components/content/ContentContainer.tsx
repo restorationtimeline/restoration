@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { FileUploadCard } from "./FileUploadCard";
+
 interface ContentContainerProps {
   title: string;
   setTitle: (value: string) => void;

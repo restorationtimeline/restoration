@@ -6,6 +6,7 @@ import NewSeries from "@/pages/NewSeries";
 import LearningPaths from "@/pages/LearningPaths";
 import Quizzes from "@/pages/Quizzes";
 import NewSource from "@/pages/NewSource";
+import SourceDetails from "@/pages/SourceDetails";
 import { RoleGuard } from "@/components/RoleGuard";
 
 export const contentRoutes = [
@@ -69,6 +70,15 @@ export const contentRoutes = [
     element={
       <RoleGuard allowedRoles={["admin", "editor"]}>
         <NewSource />
+      </RoleGuard>
+    }
+  />,
+  <Route
+    key="source-details"
+    path="/admin/content/sources/:sourceId"
+    element={
+      <RoleGuard allowedRoles={["admin", "editor"]}>
+        <SourceDetails />
       </RoleGuard>
     }
   />,

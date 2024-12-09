@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WebsiteConfig } from "./WebsiteConfig";
+import { Link } from "react-router-dom";
 
 export function SourcesList() {
   const { data: sources } = useQuery({
@@ -36,23 +37,25 @@ export function SourcesList() {
     <ScrollArea className="h-[calc(100vh-16rem)]">
       <div className="space-y-4 p-4">
         {sources.map((source) => (
-          <Card key={source.id}>
-            <CardHeader>
-              <CardTitle>{source.title}</CardTitle>
-              <CardDescription>{source.source_type}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {source.url && <p className="text-sm mb-4">{source.url}</p>}
-              {source.citation && (
-                <p className="text-sm text-muted-foreground">{source.citation}</p>
-              )}
-              {source.source_type === "url" && (
-                <div className="mt-4">
-                  <WebsiteConfig sourceId={source.id} />
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <Link key={source.id} to={`/admin/content/sources/${source.id}`}>
+            <Card className="transition-colors hover:bg-accent">
+              <CardHeader>
+                <CardTitle>{source.title}</CardTitle>
+                <CardDescription>{source.source_type}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {source.url && <p className="text-sm mb-4">{source.url}</p>}
+                {source.citation && (
+                  <p className="text-sm text-muted-foreground">{source.citation}</p>
+                )}
+                {source.source_type === "url" && (
+                  <div className="mt-4">
+                    <WebsiteConfig sourceId={source.id} />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </ScrollArea>

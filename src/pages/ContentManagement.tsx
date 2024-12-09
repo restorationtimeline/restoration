@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, BookOpen, GraduationCap, ListChecks } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 
@@ -41,6 +41,48 @@ const ContentManagement = () => {
               </span>
             </div>
             <Plus className="h-4 w-4 text-muted-foreground" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => window.location.href = "/admin/content/series"}
+          >
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Content Series</span>
+              <span className="text-sm text-muted-foreground">
+                Create and manage content series
+              </span>
+            </div>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => window.location.href = "/admin/content/learning-paths"}
+          >
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Learning Paths</span>
+              <span className="text-sm text-muted-foreground">
+                Design educational learning paths
+              </span>
+            </div>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
+            onClick={() => window.location.href = "/admin/content/quizzes"}
+          >
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-base font-medium">Quizzes</span>
+              <span className="text-sm text-muted-foreground">
+                Create and manage interactive quizzes
+              </span>
+            </div>
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
           </Button>
         </nav>
       </main>

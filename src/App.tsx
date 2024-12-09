@@ -10,6 +10,9 @@ import InviteUser from "./pages/InviteUser";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import ContentManagement from "./pages/ContentManagement";
 import Sources from "./pages/Sources";
+import Series from "./pages/Series";
+import LearningPaths from "./pages/LearningPaths";
+import Quizzes from "./pages/Quizzes";
 import Analytics from "./pages/Analytics";
 import AdminSettings from "./pages/AdminSettings";
 import { Auth } from "./components/Auth";
@@ -72,6 +75,30 @@ const App = () => (
             element={
               <RoleGuard allowedRoles={["admin", "editor"]}>
                 <Sources />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content/series"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <Series />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content/learning-paths"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <LearningPaths />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/admin/content/quizzes"
+            element={
+              <RoleGuard allowedRoles={["admin", "editor"]}>
+                <Quizzes />
               </RoleGuard>
             }
           />

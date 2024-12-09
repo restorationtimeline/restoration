@@ -27,16 +27,22 @@ export const useSourceOperations = (refetchSources: () => void) => {
         throw new Error("Invalid file type. Only PDF and EPUB files are allowed.");
       }
 
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+      // Generate source ID upfront
+      const sourceId = crypto.randomUUID();
+      const filePath = `${sourceId}.${fileExt}`;
+
+      // Upload the file
       const { error: uploadError } = await supabase.storage
-        .from("content_files")
+        .from('source_files')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
+      // Create the content source record
       const { error: insertError } = await supabase
         .from("content_sources")
         .insert({
+          id: sourceId,
           title,
           source_type: "file",
           file_path: filePath,
@@ -45,6 +51,22 @@ export const useSourceOperations = (refetchSources: () => void) => {
         });
 
       if (insertError) throw insertError;
+
+      // If it's a PDF, trigger the PDF splitter function
+      if (fileExt === 'pdf') {
+        const { error: splitError } = await supabase.functions.invoke('pdf-splitter', {
+          body: { sourceId, filePath }
+        });
+
+        if (splitError) {
+          console.error('Error splitting PDF:', splitError);
+          toast({
+            title: "Warning",
+            description: "File uploaded but there was an error splitting the PDF. Please try processing it again later.",
+            variant: "destructive",
+          });
+        }
+      }
 
       toast({
         title: "Success",

@@ -1,0 +1,4 @@
+project_id = "olgddqbnlajlhrvymwna"
+
+[functions.pdf-splitter]
+verify_jwt = true

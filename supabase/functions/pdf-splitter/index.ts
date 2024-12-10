@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { sourceId, filePath } = await req.json()
+    const { sourceId, filePath, force = false } = await req.json()
     console.log(`Processing PDF split for source ${sourceId} at path ${filePath}`)
 
     const supabase = createClient(
@@ -61,13 +61,13 @@ serve(async (req) => {
       const newPdfBytes = await newPdf.save()
       const pageFilePath = `${pagesPath}/page-${i + 1}.pdf`
 
-      // Upload the single page PDF
+      // Upload the single page PDF with force flag if specified
       const { error: uploadError } = await supabase
         .storage
         .from('source_files')
         .upload(pageFilePath, newPdfBytes, {
           contentType: 'application/pdf',
-          upsert: true
+          upsert: force // Only override if force is true
         })
 
       if (uploadError) {

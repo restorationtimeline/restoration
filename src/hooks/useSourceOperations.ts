@@ -29,12 +29,21 @@ export const useSourceOperations = (refetchSources: () => void) => {
 
       // Generate source ID upfront
       const sourceId = crypto.randomUUID();
-      const filePath = `${sourceId}.${fileExt}`;
 
-      // Upload the file
+      // Create an empty folder structure for the source
+      const { error: folderError } = await supabase.storage
+        .from('source_files')
+        .upload(`${sourceId}/.keep`, new Blob(['']));
+
+      if (folderError && !folderError.message.includes('The resource already exists')) {
+        throw folderError;
+      }
+
+      // Upload the main source file with sourceId as filename
+      const mainFilePath = `${sourceId}/source.${fileExt}`;
       const { error: uploadError } = await supabase.storage
         .from('source_files')
-        .upload(filePath, file);
+        .upload(mainFilePath, file);
 
       if (uploadError) throw uploadError;
 
@@ -45,7 +54,7 @@ export const useSourceOperations = (refetchSources: () => void) => {
           id: sourceId,
           title,
           source_type: "file",
-          file_path: filePath,
+          file_path: mainFilePath,
           file_type: fileExt,
           created_by: session.user.id,
         });
@@ -55,7 +64,7 @@ export const useSourceOperations = (refetchSources: () => void) => {
       // If it's a PDF, trigger the PDF splitter function
       if (fileExt === 'pdf') {
         const { error: splitError } = await supabase.functions.invoke('pdf-splitter', {
-          body: { sourceId, filePath }
+          body: { sourceId, filePath: mainFilePath }
         });
 
         if (splitError) {

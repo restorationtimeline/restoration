@@ -8,7 +8,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -39,8 +38,19 @@ serve(async (req) => {
     const numberOfPages = pdfDoc.getPageCount()
     console.log(`PDF has ${numberOfPages} pages`)
 
-    // Create a subfolder path using the sourceId
-    const subfolderPath = `${sourceId}/pages`
+    // Create pages subfolder path using the sourceId
+    const pagesPath = `${sourceId}/pages`
+    
+    // Create the pages folder with a .keep file
+    const { error: folderError } = await supabase
+      .storage
+      .from('source_files')
+      .upload(`${pagesPath}/.keep`, new Blob(['']))
+
+    if (folderError && !folderError.message.includes('The resource already exists')) {
+      console.error('Error creating pages folder:', folderError)
+      throw folderError
+    }
 
     // Split each page into a separate PDF
     for (let i = 0; i < numberOfPages; i++) {
@@ -49,7 +59,7 @@ serve(async (req) => {
       newPdf.addPage(page)
       
       const newPdfBytes = await newPdf.save()
-      const pageFilePath = `${subfolderPath}/page-${i + 1}.pdf`
+      const pageFilePath = `${pagesPath}/page-${i + 1}.pdf`
 
       // Upload the single page PDF
       const { error: uploadError } = await supabase
@@ -74,7 +84,7 @@ serve(async (req) => {
       .update({
         metadata: {
           total_pages: numberOfPages,
-          pages_folder: subfolderPath
+          pages_folder: pagesPath
         }
       })
       .eq('id', sourceId)
@@ -88,7 +98,7 @@ serve(async (req) => {
       JSON.stringify({
         message: 'PDF split successfully',
         numberOfPages,
-        subfolderPath
+        pagesPath
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

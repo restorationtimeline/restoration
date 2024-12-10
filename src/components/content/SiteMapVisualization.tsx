@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, Globe, Loader2 } from "lucide-react";
+import { Globe, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Page {

@@ -1,19 +1,14 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Trash2 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { SourceInfoCard } from "@/components/content/SourceInfoCard";
+import { DeleteSourceButton } from "@/components/content/DeleteSourceButton";
 
 const SourceDetails = () => {
   const { sourceId } = useParams();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteProgress, setDeleteProgress] = useState(0);
-  let deleteTimer: number | null = null;
 
   const { data: source, isLoading: sourceLoading } = useQuery({
     queryKey: ["source", sourceId],
@@ -49,56 +44,6 @@ const SourceDetails = () => {
     enabled: !!source?.file_path,
   });
 
-  const handleDeleteStart = () => {
-    setIsDeleting(true);
-    setDeleteProgress(0);
-    
-    deleteTimer = window.setInterval(() => {
-      setDeleteProgress(prev => {
-        if (prev >= 100) {
-          handleDeleteComplete();
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 20);
-  };
-
-  const handleDeleteCancel = () => {
-    if (deleteTimer) clearInterval(deleteTimer);
-    setIsDeleting(false);
-    setDeleteProgress(0);
-  };
-
-  const handleDeleteComplete = async () => {
-    if (deleteTimer) clearInterval(deleteTimer);
-    setIsDeleting(false);
-    
-    try {
-      // Delete the source
-      const { error } = await supabase
-        .from("content_sources")
-        .delete()
-        .eq("id", sourceId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Source deleted",
-        description: "The source has been successfully deleted.",
-      });
-
-      navigate("/admin/content/sources");
-    } catch (error) {
-      console.error("Error deleting source:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the source. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (sourceLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -129,52 +74,7 @@ const SourceDetails = () => {
       </header>
 
       <main className="container mx-auto p-6 pt-20 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>{source.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-medium">Source Type</h3>
-              <p className="text-muted-foreground">{source.source_type}</p>
-            </div>
-
-            {source.url && (
-              <div>
-                <h3 className="font-medium">URL</h3>
-                <p className="text-muted-foreground">{source.url}</p>
-              </div>
-            )}
-
-            {source.citation && (
-              <div>
-                <h3 className="font-medium">Citation</h3>
-                <p className="text-muted-foreground">{source.citation}</p>
-              </div>
-            )}
-
-            {source.file_path && (
-              <div>
-                <h3 className="font-medium">File Information</h3>
-                <p className="text-muted-foreground">
-                  Type: {source.file_type?.toUpperCase()}
-                </p>
-                {!countLoading && (
-                  <p className="text-muted-foreground">
-                    Extracted Pages: {pageCount}
-                  </p>
-                )}
-              </div>
-            )}
-
-            <div>
-              <h3 className="font-medium">Created At</h3>
-              <p className="text-muted-foreground">
-                {new Date(source.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <SourceInfoCard source={source} pageCount={pageCount} />
 
         <Card className="border-destructive">
           <CardHeader>
@@ -185,23 +85,7 @@ const SourceDetails = () => {
               <p className="text-sm text-muted-foreground">
                 Once you delete a source, there is no going back. Please be certain.
               </p>
-              <Button
-                variant="destructive"
-                className="w-full relative"
-                onMouseDown={handleDeleteStart}
-                onMouseUp={handleDeleteCancel}
-                onMouseLeave={handleDeleteCancel}
-                disabled={isDeleting && deleteProgress === 100}
-              >
-                {isDeleting && (
-                  <div 
-                    className="absolute inset-0 bg-destructive/20"
-                    style={{ width: `${deleteProgress}%` }}
-                  />
-                )}
-                <Trash2 className="mr-2 h-4 w-4" />
-                {isDeleting ? "Hold to delete..." : "Delete Source"}
-              </Button>
+              <DeleteSourceButton sourceId={source.id} />
             </div>
           </CardContent>
         </Card>

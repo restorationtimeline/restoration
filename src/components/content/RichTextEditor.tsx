@@ -1,6 +1,4 @@
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import "@blocknote/core/style.css";
+import { Textarea } from "@/components/ui/textarea";
 
 interface RichTextEditorProps {
   onChange?: (content: string) => void;
@@ -8,21 +6,17 @@ interface RichTextEditorProps {
 }
 
 export const RichTextEditor = ({ onChange, initialContent }: RichTextEditorProps) => {
-  // Creates a new editor instance
-  const editor: BlockNoteEditor = useBlockNote({
-    initialContent: initialContent ? JSON.parse(initialContent) as PartialBlock[] : undefined,
-    onContentChange: (editor) => {
-      // Convert the editor's content to a JSON string and call the onChange handler
-      const saveData = JSON.stringify(editor.topLevelBlocks);
-      onChange?.(saveData);
-    },
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // We'll store the content directly as a string instead of JSON
+    onChange?.(e.target.value);
+  };
 
   return (
-    <BlockNoteView
-      editor={editor}
-      theme="light"
-      className="min-h-[300px] border rounded-md"
+    <Textarea
+      value={initialContent || ""}
+      onChange={handleChange}
+      className="min-h-[300px] w-full"
+      placeholder="Enter your content here..."
     />
   );
 };

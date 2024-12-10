@@ -24,13 +24,25 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  // Extract sourceId from file_path, handling both old and new formats
+  const getSourceId = (filePath: string) => {
+    // First try to get the directory name (new format)
+    const dirName = filePath.split('/')[0];
+    // If it contains a file extension, it's the old format
+    if (dirName.includes('.')) {
+      // Remove the file extension
+      return dirName.split('.')[0];
+    }
+    return dirName;
+  };
+
   // Query the queue status for this source
   const { data: queueStatus } = useQuery({
-    queryKey: ["pdf-queue-status", source.file_path?.split('/')[0]],
+    queryKey: ["pdf-queue-status", source.file_path ? getSourceId(source.file_path) : null],
     queryFn: async () => {
       if (!source.file_path || source.file_type !== 'pdf') return null;
       
-      const sourceId = source.file_path.split('/')[0];
+      const sourceId = getSourceId(source.file_path);
       const { data, error } = await supabase
         .from('pdf_page_queue')
         .select('status')
@@ -54,9 +66,10 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
 
     setIsProcessing(true);
     try {
+      const sourceId = getSourceId(source.file_path);
       const { error } = await supabase.functions.invoke('pdf-splitter', {
         body: { 
-          sourceId: source.file_path.split('/')[0],
+          sourceId,
           filePath: source.file_path,
           force: true
         }

@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { LogIn } from "lucide-react";
+import { Button } from "./ui/button";
 
 export const TopBar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const checkAuthStatus = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      
+      setIsLoggedIn(!!session);
       
       if (session) {
         const { data: profile } = await supabase
@@ -20,10 +25,10 @@ export const TopBar = () => {
       }
     };
 
-    checkAdminStatus();
+    checkAuthStatus();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      checkAdminStatus();
+      checkAuthStatus();
     });
 
     return () => subscription.unsubscribe();
@@ -35,14 +40,24 @@ export const TopBar = () => {
         <div className="text-sm text-muted-foreground">
           Restoration Timeline
         </div>
-        {isAdmin && (
-          <Link
-            to="/admin"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Admin Area
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Admin Area
+            </Link>
+          )}
+          {!isLoggedIn && (
+            <Link to="/auth">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <LogIn className="h-4 w-4" />
+                Log in
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

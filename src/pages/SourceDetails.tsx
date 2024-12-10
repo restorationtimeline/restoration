@@ -6,6 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SourceInfoCard } from "@/components/content/SourceInfoCard";
 import { DeleteSourceButton } from "@/components/content/DeleteSourceButton";
+import { SiteMapVisualization } from "@/components/content/SiteMapVisualization";
 
 const SourceDetails = () => {
   const { sourceId } = useParams();
@@ -75,6 +76,10 @@ const SourceDetails = () => {
 
       <main className="container mx-auto p-6 pt-20 space-y-6">
         <SourceInfoCard source={source} pageCount={pageCount} />
+        
+        {source.source_type === 'url' && sourceId && (
+          <SiteMapVisualization sourceId={sourceId} />
+        )}
 
         <Card className="border-destructive">
           <CardHeader>

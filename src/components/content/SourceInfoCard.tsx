@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 interface SourceInfoCardProps {
   source: {
@@ -23,6 +24,31 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  // Query the queue status for this source
+  const { data: queueStatus } = useQuery({
+    queryKey: ["pdf-queue-status", source.file_path?.split('/')[0]],
+    queryFn: async () => {
+      if (!source.file_path || source.file_type !== 'pdf') return null;
+      
+      const sourceId = source.file_path.split('/')[0];
+      const { data, error } = await supabase
+        .from('pdf_page_queue')
+        .select('status')
+        .eq('source_id', sourceId);
+
+      if (error) throw error;
+      
+      const counts = data.reduce((acc, item) => {
+        acc[item.status] = (acc[item.status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      
+      return counts;
+    },
+    enabled: source.file_type === 'pdf',
+    refetchInterval: 5000 // Refresh every 5 seconds while queue is processing
+  });
+
   const handleReprocess = async () => {
     if (!source.file_path || source.file_type !== 'pdf') return;
 
@@ -40,7 +66,7 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
 
       toast({
         title: "Success",
-        description: "PDF reprocessing started successfully",
+        description: "PDF pages queued for processing",
       });
 
       if (onReprocess) {
@@ -50,7 +76,7 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
       console.error('Error reprocessing PDF:', error);
       toast({
         title: "Error",
-        description: "Failed to reprocess PDF",
+        description: "Failed to queue PDF pages",
         variant: "destructive",
       });
     } finally {
@@ -93,6 +119,18 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
               <p className="text-muted-foreground">
                 Extracted Pages: {pageCount}
               </p>
+            )}
+            {queueStatus && Object.keys(queueStatus).length > 0 && (
+              <div className="text-sm text-muted-foreground">
+                Queue Status:
+                <ul className="list-disc list-inside">
+                  {Object.entries(queueStatus).map(([status, count]) => (
+                    <li key={status}>
+                      {status}: {count}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
             {source.file_type === 'pdf' && (
               <Button 

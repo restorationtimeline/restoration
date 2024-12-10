@@ -163,6 +163,47 @@ export type Database = {
           },
         ]
       }
+      pdf_page_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          error: string | null
+          id: string
+          page_number: number
+          processed_at: string | null
+          source_id: string
+          status: Database["public"]["Enums"]["pdf_page_status"]
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          page_number: number
+          processed_at?: string | null
+          source_id: string
+          status?: Database["public"]["Enums"]["pdf_page_status"]
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          error?: string | null
+          id?: string
+          page_number?: number
+          processed_at?: string | null
+          source_id?: string
+          status?: Database["public"]["Enums"]["pdf_page_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pdf_page_queue_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "content_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -407,6 +448,7 @@ export type Database = {
         | "Statement"
         | "WebPage"
         | "WebSite"
+      pdf_page_status: "pending" | "processing" | "completed" | "failed"
       series_type:
         | "weekly_lesson"
         | "biographical"

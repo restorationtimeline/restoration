@@ -52,33 +52,28 @@ serve(async (req) => {
       throw folderError
     }
 
-    // Split each page into a separate PDF
+    // Add pages to the queue
     for (let i = 0; i < numberOfPages; i++) {
-      const newPdf = await PDFDocument.create()
-      const [page] = await newPdf.copyPages(pdfDoc, [i])
-      newPdf.addPage(page)
-      
-      const newPdfBytes = await newPdf.save()
-      const pageFilePath = `${pagesPath}/page-${i + 1}.pdf`
-
-      // Upload the single page PDF with force flag if specified
-      const { error: uploadError } = await supabase
-        .storage
-        .from('source_files')
-        .upload(pageFilePath, newPdfBytes, {
-          contentType: 'application/pdf',
-          upsert: force // Only override if force is true
+      const { error: queueError } = await supabase
+        .from('pdf_page_queue')
+        .upsert({
+          source_id: sourceId,
+          page_number: i + 1,
+          status: 'pending',
+          attempts: 0,
+          processed_at: null,
+          error: null
+        }, {
+          onConflict: 'source_id,page_number'
         })
 
-      if (uploadError) {
-        console.error(`Error uploading page ${i + 1}:`, uploadError)
-        throw uploadError
+      if (queueError) {
+        console.error(`Error queueing page ${i + 1}:`, queueError)
+        throw queueError
       }
-
-      console.log(`Successfully uploaded page ${i + 1}`)
     }
 
-    // Update the content source with metadata about the split pages
+    // Update the content source with metadata about the total pages
     const { error: updateError } = await supabase
       .from('content_sources')
       .update({
@@ -96,7 +91,7 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        message: 'PDF split successfully',
+        message: 'PDF pages queued successfully',
         numberOfPages,
         pagesPath
       }),

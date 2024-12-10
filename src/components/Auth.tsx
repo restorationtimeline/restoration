@@ -82,7 +82,7 @@ export const Auth = () => {
                 },
               },
             }}
-            providers={[]}
+            providers={["google", "facebook"]}
             redirectTo={window.location.origin}
             localization={{
               variables: {

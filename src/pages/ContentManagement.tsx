@@ -20,7 +20,7 @@ const ContentManagement = () => {
   return (
     <div className="flex h-screen flex-col bg-background">
       <ContentHeader />
-      <main className="flex-1 pt-16">
+      <main className="flex-1 overflow-hidden">
         {showSeriesList ? <SeriesList /> : <ContentNav />}
       </main>
     </div>

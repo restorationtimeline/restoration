@@ -10,6 +10,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WebsiteConfig } from "./WebsiteConfig";
 import { Link } from "react-router-dom";
+import { FileText, Globe, Upload } from "lucide-react";
 
 export function SourcesList() {
   const { data: sources } = useQuery({
@@ -33,23 +34,45 @@ export function SourcesList() {
     );
   }
 
+  const getSourceIcon = (sourceType: string) => {
+    switch (sourceType) {
+      case 'url':
+        return <Globe className="h-5 w-5 text-primary" />;
+      case 'file':
+        return <Upload className="h-5 w-5 text-primary" />;
+      default:
+        return <FileText className="h-5 w-5 text-primary" />;
+    }
+  };
+
   return (
     <ScrollArea className="h-[calc(100vh-16rem)]">
-      <div className="space-y-4 p-4">
+      <div className="container mx-auto px-4 py-4 space-y-4">
         {sources.map((source) => (
           <Link key={source.id} to={`/admin/content/sources/${source.id}`}>
-            <Card className="transition-colors hover:bg-accent">
-              <CardHeader>
-                <CardTitle>{source.title}</CardTitle>
-                <CardDescription>{source.source_type}</CardDescription>
+            <Card className="w-full transition-colors hover:bg-accent">
+              <CardHeader className="flex flex-row items-start gap-4 pb-2">
+                {getSourceIcon(source.source_type)}
+                <div className="flex-1">
+                  <CardTitle className="text-lg font-semibold">{source.title}</CardTitle>
+                  <CardDescription className="mt-1">
+                    Type: {source.source_type.charAt(0).toUpperCase() + source.source_type.slice(1)}
+                  </CardDescription>
+                </div>
               </CardHeader>
               <CardContent>
-                {source.url && <p className="text-sm mb-4">{source.url}</p>}
+                {source.url && (
+                  <p className="text-sm text-muted-foreground mb-4 truncate">
+                    {source.url}
+                  </p>
+                )}
                 {source.citation && (
-                  <p className="text-sm text-muted-foreground">{source.citation}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {source.citation}
+                  </p>
                 )}
                 {source.source_type === "url" && (
-                  <div className="mt-4">
+                  <div className="mt-4 pt-4 border-t">
                     <WebsiteConfig sourceId={source.id} />
                   </div>
                 )}

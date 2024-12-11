@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminListItem } from "@/components/admin/AdminListItem";
+import { Users, FileText, LineChart, Settings } from "lucide-react";
 
 const Admin = () => {
   const { toast } = useToast();
@@ -50,78 +50,37 @@ const Admin = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-background">
-      <header className="fixed inset-x-0 top-0 z-50 border-b bg-background">
-        <div className="flex h-16 items-center gap-4 px-4">
-          <Link to="/">
-            <Button variant="ghost" size="icon" className="shrink-0">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-        </div>
-      </header>
+    <AdminLayout title="Admin Dashboard" backTo="/">
+      <nav className="divide-y">
+        <AdminListItem
+          to="/admin/users"
+          icon={<Users className="h-5 w-5 text-primary" />}
+          title="User Management"
+          description="Manage user accounts and permissions"
+        />
+        
+        <AdminListItem
+          to="/admin/content"
+          icon={<FileText className="h-5 w-5 text-primary" />}
+          title="Content Management"
+          description="Manage timeline content and entries"
+        />
 
-      <main className="flex-1 pt-16">
-        <nav className="divide-y">
-          <Button
-            variant="ghost"
-            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
-            onClick={() => navigate("/admin/users")}
-          >
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-base font-medium">User Management</span>
-              <span className="text-sm text-muted-foreground">
-                Manage user accounts and permissions
-              </span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
-          
-          <Button
-            variant="ghost"
-            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
-            onClick={() => navigate("/admin/content")}
-          >
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-base font-medium">Content Management</span>
-              <span className="text-sm text-muted-foreground">
-                Manage timeline content and entries
-              </span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
+        <AdminListItem
+          to="/admin/analytics"
+          icon={<LineChart className="h-5 w-5 text-primary" />}
+          title="Analytics"
+          description="View site statistics and user engagement"
+        />
 
-          <Button
-            variant="ghost"
-            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
-            onClick={() => navigate("/admin/analytics")}
-          >
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-base font-medium">Analytics</span>
-              <span className="text-sm text-muted-foreground">
-                View site statistics and user engagement
-              </span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-between px-4 py-6 h-auto hover:bg-accent"
-            onClick={() => navigate("/admin/settings")}
-          >
-            <div className="flex flex-col items-start gap-0.5">
-              <span className="text-base font-medium">Settings</span>
-              <span className="text-sm text-muted-foreground">
-                Configure site settings and preferences
-              </span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
-        </nav>
-      </main>
-    </div>
+        <AdminListItem
+          to="/admin/settings"
+          icon={<Settings className="h-5 w-5 text-primary" />}
+          title="Settings"
+          description="Configure site settings and preferences"
+        />
+      </nav>
+    </AdminLayout>
   );
 };
 

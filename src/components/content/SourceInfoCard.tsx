@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { SourceMetadata } from "./source/SourceMetadata";
+import { SourceUrlInfo } from "./source/SourceUrlInfo";
+import { SourceCitationInfo } from "./source/SourceCitationInfo";
+import { SourceFileInfo } from "./source/SourceFileInfo";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SourceInfoCardProps {
   source: {
@@ -103,68 +105,25 @@ export function SourceInfoCard({ source, pageCount, onReprocess }: SourceInfoCar
         <CardTitle>{source.title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <h3 className="font-medium">Source Type</h3>
-          <p className="text-muted-foreground">{source.source_type}</p>
-        </div>
+        <SourceMetadata
+          title={source.title}
+          sourceType={source.source_type}
+          createdAt={source.created_at}
+        />
 
-        {source.url && (
-          <div>
-            <h3 className="font-medium">URL</h3>
-            <p className="text-muted-foreground">{source.url}</p>
-          </div>
-        )}
-
-        {source.citation && (
-          <div>
-            <h3 className="font-medium">Citation</h3>
-            <p className="text-muted-foreground">{source.citation}</p>
-          </div>
-        )}
-
+        {source.url && <SourceUrlInfo url={source.url} />}
+        {source.citation && <SourceCitationInfo citation={source.citation} />}
+        
         {source.file_path && (
-          <div className="space-y-2">
-            <h3 className="font-medium">File Information</h3>
-            <p className="text-muted-foreground">
-              Type: {source.file_type?.toUpperCase()}
-            </p>
-            {typeof pageCount !== 'undefined' && (
-              <p className="text-muted-foreground">
-                Extracted Pages: {pageCount}
-              </p>
-            )}
-            {queueStatus && Object.keys(queueStatus).length > 0 && (
-              <div className="text-sm text-muted-foreground">
-                Queue Status:
-                <ul className="list-disc list-inside">
-                  {Object.entries(queueStatus).map(([status, count]) => (
-                    <li key={status}>
-                      {status}: {count}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {source.file_type === 'pdf' && (
-              <Button 
-                onClick={handleReprocess}
-                disabled={isProcessing}
-                variant="secondary"
-                size="sm"
-              >
-                {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Reprocess PDF
-              </Button>
-            )}
-          </div>
+          <SourceFileInfo
+            filePath={source.file_path}
+            fileType={source.file_type || ''}
+            pageCount={pageCount}
+            queueStatus={queueStatus}
+            onReprocess={handleReprocess}
+            isProcessing={isProcessing}
+          />
         )}
-
-        <div>
-          <h3 className="font-medium">Created At</h3>
-          <p className="text-muted-foreground">
-            {new Date(source.created_at).toLocaleDateString()}
-          </p>
-        </div>
       </CardContent>
     </Card>
   );

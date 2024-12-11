@@ -21,7 +21,7 @@ export const SeriesList = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center mt-16">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
     );
@@ -29,14 +29,14 @@ export const SeriesList = () => {
 
   if (!series?.length) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-muted-foreground">
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center mt-16 text-muted-foreground">
         No series found. Create your first series to get started.
       </div>
     );
   }
 
   return (
-    <ScrollArea className="h-[calc(100vh-4rem)]">
+    <ScrollArea className="h-[calc(100vh-4rem)] mt-16">
       <div className="divide-y">
         {series.map((item) => (
           <Link

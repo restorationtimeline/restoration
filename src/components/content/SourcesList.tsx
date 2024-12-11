@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { WebsiteConfig } from "./WebsiteConfig";
 import { Link } from "react-router-dom";
 import { FileText, Globe, Upload } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function SourcesList() {
   const { data: sources } = useQuery({
@@ -47,37 +48,39 @@ export function SourcesList() {
 
   return (
     <ScrollArea className="h-[calc(100vh-16rem)]">
-      <div className="container mx-auto px-4 py-4 space-y-4">
+      <div className="divide-y">
         {sources.map((source) => (
-          <Link key={source.id} to={`/admin/content/sources/${source.id}`}>
-            <Card className="w-full transition-colors hover:bg-accent">
-              <CardHeader className="flex flex-row items-start gap-4 pb-2">
-                {getSourceIcon(source.source_type)}
-                <div className="flex-1">
-                  <CardTitle className="text-lg font-semibold">{source.title}</CardTitle>
-                  <CardDescription className="mt-1">
-                    Type: {source.source_type.charAt(0).toUpperCase() + source.source_type.slice(1)}
-                  </CardDescription>
+          <Link
+            key={source.id}
+            to={`/admin/content/sources/${source.id}`}
+            className="block hover:bg-accent transition-colors"
+          >
+            <div className="p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  {getSourceIcon(source.source_type)}
+                  <div className="space-y-1">
+                    <h3 className="font-medium leading-none">
+                      {source.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {source.citation || source.url || "No description provided"}
+                    </p>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                {source.url && (
-                  <p className="text-sm text-muted-foreground mb-4 truncate">
-                    {source.url}
-                  </p>
-                )}
-                {source.citation && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {source.citation}
-                  </p>
-                )}
+                <Badge variant={source.status === "published" ? "default" : "secondary"}>
+                  {source.status}
+                </Badge>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Badge variant="outline">{source.source_type}</Badge>
                 {source.source_type === "url" && (
-                  <div className="mt-4 pt-4 border-t">
+                  <div className="mt-2">
                     <WebsiteConfig sourceId={source.id} />
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </Link>
         ))}
       </div>

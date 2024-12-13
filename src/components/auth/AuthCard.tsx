@@ -10,24 +10,31 @@ export const AuthCard = () => {
 
   useEffect(() => {
     // Listen for auth state changes to show appropriate messages
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      console.log("Auth state changed:", event);
       
-      if (event === "USER_DELETED") {
-        toast({
-          title: "Account deleted",
-          description: "Your account has been successfully deleted",
-        });
-      } else if (event === "PASSWORD_RECOVERY") {
-        toast({
-          title: "Password recovery",
-          description: "Check your email for password reset instructions",
-        });
-      } else if (event === "SIGNED_OUT") {
-        toast({
-          title: "Signed out",
-          description: "You have been successfully signed out",
-        });
+      switch (event) {
+        case "USER_DELETED":
+          toast({
+            title: "Account deleted",
+            description: "Your account has been successfully deleted",
+          });
+          break;
+        case "PASSWORD_RECOVERY":
+          toast({
+            title: "Password recovery",
+            description: "Check your email for password reset instructions",
+          });
+          break;
+        case "SIGNED_OUT":
+          toast({
+            title: "Signed out",
+            description: "You have been successfully signed out",
+          });
+          break;
+        default:
+          // Handle other events if needed
+          break;
       }
     });
 
@@ -73,14 +80,6 @@ export const AuthCard = () => {
           }}
           providers={["google"]}
           redirectTo={`${window.location.origin}/auth/callback`}
-          onError={(error) => {
-            console.error("Auth error:", error);
-            toast({
-              title: "Authentication Error",
-              description: error.message,
-              variant: "destructive",
-            });
-          }}
           localization={{
             variables: {
               sign_in: {

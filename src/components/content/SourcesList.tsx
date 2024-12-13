@@ -1,17 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WebsiteConfig } from "./WebsiteConfig";
 import { Link } from "react-router-dom";
 import { FileText, Globe, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function SourcesList() {
   const { data: sources } = useQuery({
@@ -38,48 +32,58 @@ export function SourcesList() {
   const getSourceIcon = (sourceType: string) => {
     switch (sourceType) {
       case 'url':
-        return <Globe className="h-5 w-5 text-primary" />;
+        return <Globe className="h-4 w-4" />;
       case 'file':
-        return <Upload className="h-5 w-5 text-primary" />;
+        return <Upload className="h-4 w-4" />;
       default:
-        return <FileText className="h-5 w-5 text-primary" />;
+        return <FileText className="h-4 w-4" />;
     }
   };
 
   return (
     <ScrollArea className="h-[calc(100vh-16rem)]">
-      <div className="divide-y">
+      <div className="space-y-2">
         {sources.map((source) => (
           <Link
             key={source.id}
             to={`/admin/content/sources/${source.id}`}
-            className="block hover:bg-accent transition-colors"
+            className="block"
           >
-            <div className="p-4 sm:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  {getSourceIcon(source.source_type)}
-                  <div className="space-y-1">
-                    <h3 className="font-medium leading-none">
+            <div className="group p-4 rounded-lg border bg-card hover:bg-accent transition-colors">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={cn(
+                    "p-2 rounded-md",
+                    source.status === "published" ? "bg-primary/10" : "bg-muted"
+                  )}>
+                    {getSourceIcon(source.source_type)}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-medium truncate">
                       {source.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {source.citation || source.url || "No description provided"}
+                    <p className="text-sm text-muted-foreground truncate">
+                      {source.citation || source.url || "No description"}
                     </p>
                   </div>
                 </div>
-                <Badge variant={source.status === "published" ? "default" : "secondary"}>
-                  {source.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="whitespace-nowrap">
+                    {source.source_type}
+                  </Badge>
+                  <Badge 
+                    variant={source.status === "published" ? "default" : "secondary"}
+                    className="whitespace-nowrap"
+                  >
+                    {source.status}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex gap-2 mt-4">
-                <Badge variant="outline">{source.source_type}</Badge>
-                {source.source_type === "url" && (
-                  <div className="mt-2">
-                    <WebsiteConfig sourceId={source.id} />
-                  </div>
-                )}
-              </div>
+              {source.source_type === "url" && (
+                <div className="mt-3 border-t pt-3">
+                  <WebsiteConfig sourceId={source.id} />
+                </div>
+              )}
             </div>
           </Link>
         ))}

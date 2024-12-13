@@ -1,69 +1,50 @@
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+import { Section } from "./ui/section";
 import { StoryCard } from "./StoryCard";
 
 export const Features = () => {
   const features = [
     {
-      title: "People",
-      description: "Learn about key figures who shaped the Restoration movement and their lasting impact.",
-      icon: "👥",
+      title: "Multiple Perspectives",
+      description: "Explore diverse viewpoints on historical events and interpretations",
+      icon: "🔍"
     },
     {
-      title: "Events",
-      description: "Explore significant moments and turning points in Mormon history.",
-      icon: "📅",
+      title: "Interactive Timeline",
+      description: "Navigate through history with our dynamic timeline interface",
+      icon: "📅"
     },
     {
-      title: "Places",
-      description: "Discover the locations where important historical events unfolded.",
-      icon: "🏛️",
+      title: "Source Analysis",
+      description: "Examine primary sources and scholarly interpretations",
+      icon: "📚"
     },
     {
-      title: "Organizations",
-      description: "Understand the various groups and institutions that emerged during the Restoration.",
-      icon: "🏢",
-    },
-    {
-      title: "Ideas",
-      description: "Examine the theological concepts and doctrinal developments that shaped the movement.",
-      icon: "💡",
-    },
-    {
-      title: "Artifacts",
-      description: "Study historical objects and documents that provide insights into the past.",
-      icon: "📜",
-    },
-    {
-      title: "Sources",
-      description: "Access primary and secondary sources that document the historical record.",
-      icon: "📚",
-    },
-    {
-      title: "Perspectives",
-      description: "Consider different viewpoints and interpretations of historical events.",
-      icon: "🔍",
-    },
+      title: "Community Insights",
+      description: "Engage with other researchers and share discoveries",
+      icon: "👥"
+    }
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <h2 className="font-serif text-4xl md:text-5xl text-primary text-center mb-12">
-          What Will You Explore?
+    <Section className="bg-background">
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <h2 className="text-4xl font-serif text-primary mb-4">
+          Discover the Story
         </h2>
-        <div className="relative">
-          <ScrollArea className="w-full whitespace-nowrap rounded-md" data-orientation="horizontal">
-            <div className="flex space-x-4 p-4 touch-pan-x">
-              {features.map((feature, index) => (
-                <div key={index} className="shrink-0 w-[120px] md:w-[133px]">
-                  <StoryCard {...feature} />
-                </div>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" className="touch-none" />
-          </ScrollArea>
-        </div>
+        <p className="text-secondary text-lg">
+          Explore the rich tapestry of Mormon history through multiple lenses and perspectives
+        </p>
       </div>
-    </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {features.map((feature, index) => (
+          <StoryCard
+            key={index}
+            title={feature.title}
+            description={feature.description}
+            icon={feature.icon}
+          />
+        ))}
+      </div>
+    </Section>
   );
 };

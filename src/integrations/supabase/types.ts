@@ -66,6 +66,42 @@ export type Database = {
         }
         Relationships: []
       }
+      oauth_accounts: {
+        Row: {
+          access_token: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          provider: Database["public"]["Enums"]["auth_provider"]
+          provider_account_id: string
+          refresh_token: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider: Database["public"]["Enums"]["auth_provider"]
+          provider_account_id: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider?: Database["public"]["Enums"]["auth_provider"]
+          provider_account_id?: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       page_versions: {
         Row: {
           changes_detected: Json | null
@@ -425,6 +461,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      auth_provider: "github"
       creativework_type:
         | "Article"
         | "Book"

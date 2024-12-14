@@ -4,13 +4,14 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 export const AuthCard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
     // Listen for auth state changes to show appropriate messages
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
       console.log("Auth state changed:", event);
       
       switch (event) {

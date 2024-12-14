@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthStateHandlerProps {
   onAuthStateChange: (event: AuthChangeEvent, session: Session | null) => void;

@@ -9,6 +9,9 @@ export const AuthForm = () => {
       appearance={{ theme: ThemeSupa }}
       providers={["github"]}
       redirectTo={`${window.location.origin}/admin`}
+      onError={(error) => {
+        console.error("Auth error:", error);
+      }}
     />
   );
 };

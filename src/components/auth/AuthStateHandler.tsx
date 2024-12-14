@@ -13,32 +13,60 @@ export const AuthStateHandler = ({ onAuthStateChange }: AuthStateHandlerProps) =
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleAuthChange = async (event: AuthChangeEvent, session: Session | null) => {
-      switch (event) {
-        case "SIGNED_IN":
-          toast({
-            title: "Signed in successfully",
-            description: "Welcome back!",
-          });
-          navigate("/admin");
-          break;
-        case "SIGNED_OUT":
-          toast({
-            title: "Signed out",
-            description: "You have been signed out.",
-          });
-          navigate("/");
-          break;
-        case "PASSWORD_RECOVERY":
-          toast({
-            title: "Password recovery",
-            description: "Check your email for the recovery link.",
-          });
-          break;
-        default:
-          break;
+    // Check initial session
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Session check error:", error);
+        return;
       }
-      onAuthStateChange(event, session);
+      if (session) {
+        console.log("Initial session found");
+      }
+    };
+    
+    checkSession();
+
+    const handleAuthChange = async (event: AuthChangeEvent, session: Session | null) => {
+      console.log("Auth state changed:", event, session);
+      
+      try {
+        switch (event) {
+          case "SIGNED_IN":
+            toast({
+              title: "Signed in successfully",
+              description: "Welcome back!",
+            });
+            navigate("/admin");
+            break;
+          case "SIGNED_OUT":
+            toast({
+              title: "Signed out",
+              description: "You have been signed out.",
+            });
+            navigate("/");
+            break;
+          case "TOKEN_REFRESHED":
+            console.log("Token refreshed successfully");
+            break;
+          case "USER_UPDATED":
+            toast({
+              title: "Profile updated",
+              description: "Your profile has been updated.",
+            });
+            break;
+          default:
+            break;
+        }
+        onAuthStateChange(event, session);
+      } catch (error) {
+        console.error("Error handling auth change:", error);
+        toast({
+          title: "Error",
+          description: "There was a problem with authentication",
+          variant: "destructive",
+        });
+      }
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthChange);

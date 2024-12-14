@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Search, Plus } from "lucide-react";
+import { ChevronLeft, Search, Plus, Globe, Book, FileText, Video, Mic } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const ContentHeader = () => {
   return (
@@ -20,11 +26,45 @@ export const ContentHeader = () => {
             <Search className="h-4 w-4" />
           </Button>
 
-          <Link to="/admin/content/new">
-            <Button variant="ghost" size="icon">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <Link to="/admin/content/new?type=website">
+                <DropdownMenuItem>
+                  <Globe className="mr-2 h-4 w-4" />
+                  Website
+                </DropdownMenuItem>
+              </Link>
+              <Link to="/admin/content/new?type=book">
+                <DropdownMenuItem>
+                  <Book className="mr-2 h-4 w-4" />
+                  Book
+                </DropdownMenuItem>
+              </Link>
+              <Link to="/admin/content/new?type=article">
+                <DropdownMenuItem>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Article
+                </DropdownMenuItem>
+              </Link>
+              <Link to="/admin/content/new?type=video">
+                <DropdownMenuItem>
+                  <Video className="mr-2 h-4 w-4" />
+                  Video
+                </DropdownMenuItem>
+              </Link>
+              <Link to="/admin/content/new?type=podcast">
+                <DropdownMenuItem>
+                  <Mic className="mr-2 h-4 w-4" />
+                  Podcast
+                </DropdownMenuItem>
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
